@@ -15,11 +15,22 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->foreignId('city_id')->nullable()->onDelete('cascade');
+            $table->string('name', 90);
+            $table->string('username', 35)->unique()->index();
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('phone', 13)->unique();
+            $table->string('nik', 16)->nullable()->unique();
+            $table->string('role', 15);
+            $table->enum('status', ['ACTIVE', 'INACTIVE']);
+            $table->text('address')->nullable();
+            $table->string('avatar', 120)->nullable();
             $table->string('password');
+            $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
+            $table->unsignedInteger('created_by')->nullable();
+            $table->unsignedInteger('updated_by')->nullable();
+            $table->unsignedInteger('deleted_by')->nullable();
             $table->timestamps();
         });
     }

@@ -2,13 +2,14 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\Auth\RegisterController;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| Authentication API Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register API routes for your application. These
+| Here is where you can register Authentication API routes for your application. These
 | routes are loaded by the RouteServiceProvider within a group which
 | is assigned the "api" middleware group. Enjoy building your API!
 |
@@ -18,5 +19,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-$routes = glob(__DIR__ . "/api/*.php");
-foreach ($routes as $route) require($route);
+Route::get('/email/verify/{id}/{hash}', function (Request $request) {
+    // $request->fulfill();
+    return 'vv';
+})->name('verification.verify');
+
+Route::post("/register", RegisterController::class)->name("auth.register");

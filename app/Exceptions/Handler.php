@@ -2,8 +2,12 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Database\QueryException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Throwable;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -43,8 +47,47 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
+        $this->reportable(function (\Throwable $e) {
             //
+        });
+
+        $this->renderable(function (\Throwable $exception, $request) {
+            if ($request->is('api/*')) {
+                if ($exception instanceof NotFoundHttpException) {
+                    return response()->json([
+                        'code' => $exception->getStatusCode(),
+                        'message' => 'Endpoint not found'
+                    ], $exception->getStatusCode());
+                } elseif ($exception instanceof ModelNotFoundException) {
+                    $message = $exception->getMessage();
+                    if ($exception->getModel()) $message = last(explode('\\', $exception->getModel())) . ' not found';
+                    return response()->json([
+                        'code' => $exception->getCode() ?: 404,
+                        'message' => $message
+                    ], $exception->getCode() ?: 404);
+                } elseif ($exception instanceof ValidationException) {
+                    return response()->json([
+                        'code' => 422,
+                        'message' => 'The given data was invalid',
+                        'errors' => $exception->errors()
+                    ], 422);
+                } elseif ($exception instanceof AuthenticationException) {
+                    return response()->json([
+                        'code' => 401,
+                        'message' => $exception->getMessage()
+                    ], 401);
+                } elseif ($exception instanceof QueryException) {
+                    return response()->json([
+                        'code' => 500,
+                        'message' => $exception->getMessage(),
+                    ], 500);
+                } elseif ($exception instanceof \Exception) {
+                    return response()->json([
+                        'code' => $exception->getCode() ?: 500,
+                        'message' => $exception->getMessage()
+                    ], $exception->getCode() ?: 500);
+                }
+            }
         });
     }
 }
