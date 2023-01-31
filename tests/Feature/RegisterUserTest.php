@@ -39,7 +39,7 @@ class RegisterUserTest extends TestCase
     }
 
     /** @test */
-    public function the_event_should_dispatched()
+    public function the_registered_event_should_be_sync_with_listeners()
     {
         $this->postJson(route('auth.register'), $this->data);
 

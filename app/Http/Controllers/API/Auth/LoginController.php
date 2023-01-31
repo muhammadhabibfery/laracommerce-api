@@ -30,15 +30,14 @@ class LoginController extends Controller
             ->response()
             ->getData(true);
 
-        // dd($user);
 
         return $this->wrapResponse(Response::HTTP_OK, self::LOGIN_SUCCESS, $user);
     }
 
     /**
-     * query get a user by email.
+     * query get a user by username.
      *
-     * @param  string $email
+     * @param  string $username
      * @return User|null
      */
     private function getUserByUsername(string $username): ?User

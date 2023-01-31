@@ -2,11 +2,14 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\QueryException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
@@ -54,23 +57,19 @@ class Handler extends ExceptionHandler
         $this->renderable(function (\Throwable $exception, $request) {
             if ($request->is('api/*')) {
                 if ($exception instanceof NotFoundHttpException) {
+                    $statusCode = $exception->getStatusCode() ?: 404;
+                    $message = $exception->getMessage() ?: 'Endpoint not found';
                     return response()->json([
-                        'code' => $exception->getStatusCode(),
-                        'message' => 'Endpoint not found'
-                    ], $exception->getStatusCode());
-                } elseif ($exception instanceof ModelNotFoundException) {
-                    $message = $exception->getMessage();
-                    if ($exception->getModel()) $message = last(explode('\\', $exception->getModel())) . ' not found';
-                    return response()->json([
-                        'code' => $exception->getCode() ?: 404,
+                        'code' => $statusCode,
                         'message' => $message
-                    ], $exception->getCode() ?: 404);
+                    ], $statusCode);
                 } elseif ($exception instanceof ValidationException) {
+                    $statusCode = $exception->status ?: 422;
                     return response()->json([
-                        'code' => 422,
+                        'code' => $statusCode,
                         'message' => 'The given data was invalid',
                         'errors' => $exception->errors()
-                    ], 422);
+                    ], $statusCode);
                 } elseif ($exception instanceof AuthenticationException) {
                     return response()->json([
                         'code' => 401,
@@ -81,12 +80,27 @@ class Handler extends ExceptionHandler
                         'code' => 500,
                         'message' => $exception->getMessage(),
                     ], 500);
-                } elseif ($exception instanceof \Exception) {
+                } elseif ($exception instanceof AuthorizationException || $exception instanceof AccessDeniedHttpException) {
+                    $statusCode = $exception->getStatusCode() ?: 403;
                     return response()->json([
-                        'code' => $exception->getCode() ?: 500,
-                        'message' => $exception->getMessage()
-                    ], $exception->getCode() ?: 500);
+                        'code' => $statusCode,
+                        'message' => $exception->getMessage(),
+                    ], $statusCode);
+                } elseif ($exception instanceof BadRequestHttpException) {
+                    $statusCode = $exception->getStatusCode() ?: 400;
+                    $message = $exception->getMessage() ?: 'Invalid request';
+                    return response()->json([
+                        'code' => $statusCode,
+                        'message' => $message
+                    ], $statusCode);
                 }
+                // elseif ($exception instanceof \Exception) {
+                //     dd($exception);
+                //     return response()->json([
+                //         'code' => $exception->getCode() ?: 500,
+                //         'message' => $exception->getMessage()
+                //     ], $exception->getCode() ?: 500);
+                // }
             }
         });
     }
