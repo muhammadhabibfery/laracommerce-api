@@ -38,6 +38,12 @@ class AuthRequest extends FormRequest
                         ->symbols()
                 ],
             ];
+
+        if (request()->is('api/login'))
+            return [
+                'username' => ['required', 'string'],
+                'password' => ['required', 'string']
+            ];
     }
 
     /**

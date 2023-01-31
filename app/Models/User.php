@@ -64,15 +64,47 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * set the user's name
+     *
+     * @param  string $value
+     * @return void
+     */
+    public function setNameAttribute(string $value): void
+    {
+        $this->attributes['name'] = str($value)->title()->value();
+    }
+
+    /**
+     * set the user's username
+     *
+     * @param  string $value
+     * @return void
+     */
+    public function setUsernameAttribute(string $value): void
+    {
+        $this->attributes['username'] = strtolower($value);
+    }
+
+    /**
      * set the user's role
      *
      * @param  string $value
      * @return void
      */
-    public function setRoleAttribute($value)
+    public function setRoleAttribute(string $value): void
     {
         $value = strtoupper($value);
         $this->attributes['role'] = json_encode([$value]);
+    }
+
+    /**
+     * get the user's avatar with custom directory path
+     *
+     * @return mixed
+     */
+    public function getAvatar(): mixed
+    {
+        return $this->avatar ? asset('storage/avatars/' . $this->avatar) : asset('images/no-user.jpg');
     }
 
     /**

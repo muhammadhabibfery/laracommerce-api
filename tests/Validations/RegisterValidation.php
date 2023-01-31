@@ -2,7 +2,6 @@
 
 namespace Tests\Validations;
 
-use App\Models\User;
 use Illuminate\Support\Arr;
 
 trait RegisterValidation
@@ -60,16 +59,5 @@ trait RegisterValidation
             ->assertJsonPath('errors.password.0', 'The password must be at least 8 characters.')
             ->assertJsonPath('errors.password.1', 'The password must contain at least one symbol.')
             ->assertJsonPath('errors.password.2', 'The password must contain at least one number.');
-    }
-
-    /**
-     * create a user instance
-     *
-     * @param  array $data
-     * @return User
-     */
-    public function createUser(?array $data = []): User
-    {
-        return User::factory()->create($data);
     }
 }

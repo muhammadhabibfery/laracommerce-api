@@ -12,11 +12,11 @@ use Symfony\Component\HttpFoundation\Response;
 class RegisterController extends Controller
 {
 
-    private const SUCCESS_MESSAGE = 'Account has been successfully registered, please check your email to verify your account',
-        FAILED_MESSAGE = 'Your account failed to register';
+    private const SUCCESS_MESSAGE = 'Account has been successfully registered, please check your email to verify your account.',
+        FAILED_MESSAGE = 'Your account failed to register.';
 
     /**
-     * Handle the incoming request.
+     * Handle the user register.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse

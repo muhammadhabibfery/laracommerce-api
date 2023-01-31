@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\Auth\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\Auth\RegisterController;
@@ -25,3 +26,4 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request) {
 })->name('verification.verify');
 
 Route::post("/register", RegisterController::class)->name("auth.register");
+Route::post("/login", [LoginController::class, "login"])->name("auth.login");
