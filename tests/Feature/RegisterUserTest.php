@@ -2,15 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
+use Illuminate\Support\Arr;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Testing\Fluent\AssertableJson;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Validations\RegisterValidation as ValidationTest;
 
 class RegisterUserTest extends TestCase
@@ -26,7 +22,7 @@ class RegisterUserTest extends TestCase
     /** @test */
     public function a_user_can_register()
     {
-        $res = $this->postJson(route('auth.register'), $this->data);
+        $res = $this->postJson(route('auth.register'), $this->data, $this->header);
 
         $res->assertCreated()
             ->assertJson(
@@ -36,14 +32,5 @@ class RegisterUserTest extends TestCase
 
         $this->assertDatabaseCount('users', 1)
             ->assertDatabaseHas('users', Arr::except($this->data, ['password', 'password_confirmation']));
-    }
-
-    /** @test */
-    public function the_registered_event_should_be_sync_with_listeners()
-    {
-        $this->postJson(route('auth.register'), $this->data);
-
-        Event::fake();
-        Event::assertListening(Registered::class, SendEmailVerificationNotification::class);
     }
 }

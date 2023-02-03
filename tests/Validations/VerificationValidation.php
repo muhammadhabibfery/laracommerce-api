@@ -13,7 +13,7 @@ trait VerificationValidation
     {
         $this->withExceptionHandling();
 
-        $res = $this->getJson(route('verification.verify', ['id' => '1000', 'hash' => '123',]));
+        $res = $this->getJson(route('verification.verify', ['id' => '1000', 'hash' => '123']), $this->header);
 
         $res->assertUnauthorized()
             ->assertJsonPath('message', $this->unauthorizedMessage);
@@ -27,7 +27,7 @@ trait VerificationValidation
         $res = $this->getJson(route(
             'verification.verify',
             ['id' => (string) $this->user->id, 'hash' => '123']
-        ));
+        ), $this->header);
 
         $res->assertForbidden()
             ->assertJsonPath('message', $this->unauthorizedMessage);
@@ -40,14 +40,25 @@ trait VerificationValidation
 
         $user = $this->createUser();
 
-        $res = $this->getJson(
-            route(
-                'verification.verify',
-                ['id' => $user->id, 'hash' => sha1($user->email)]
-            )
-        );
+        $res = $this->getJson(route(
+            'verification.verify',
+            ['id' => $user->id, 'hash' => sha1($user->email)]
+        ), $this->header);
 
         $res->assertStatus(400)
             ->assertJsonPath('message', $this->badRequestMessage);
+    }
+
+    /** @test */
+    public function unverified_user_cannot_access_the_authenticated_routes()
+    {
+        $this->withExceptionHandling();
+
+        $this->authenticatedUser(['email_verified_at' => null]);
+
+        $res = $this->getJson('/api/user', $this->header);
+
+        $res->assertForbidden()
+            ->assertJsonPath('message', 'Your email address is not verified.');
     }
 }

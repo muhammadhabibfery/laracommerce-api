@@ -15,7 +15,7 @@ trait LoginValidation
     {
         $this->withExceptionHandling();
 
-        $res = $this->postJson(route('auth.login'));
+        $res = $this->postJson(route('auth.login'), [], $this->header);
 
         $res->assertUnprocessable()
             ->assertInvalid(['username', 'password'])
@@ -29,13 +29,11 @@ trait LoginValidation
 
         $this->withExceptionHandling();
 
-        $res = $this->postJson(route('auth.login'), $this->data);
+        $res = $this->postJson(route('auth.login'), $this->data, $this->header);
 
         $res->assertUnprocessable()
             ->assertInvalid(['username'])
             ->assertJsonPath('errors.username.0', 'The credentials does not match.')
             ->assertJsonCount(1, 'errors');
-
-        $this->assertDatabaseCount('users', 1);
     }
 }

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
@@ -58,7 +59,8 @@ class Handler extends ExceptionHandler
             if ($request->is('api/*')) {
                 if ($exception instanceof NotFoundHttpException) {
                     $statusCode = $exception->getStatusCode() ?: 404;
-                    $message = $exception->getMessage() ?: 'Endpoint not found';
+                    // $message = $exception->getMessage() ? str_replace('/', '//', $exception->getMessage()) : 'Endpoint not found';
+                    $message = str_contains($exception->getMessage(), 'The route') ? 'Endpoint not found' : $exception->getMessage();
                     return response()->json([
                         'code' => $statusCode,
                         'message' => $message
@@ -87,6 +89,13 @@ class Handler extends ExceptionHandler
                         'message' => $exception->getMessage(),
                     ], $statusCode);
                 } elseif ($exception instanceof BadRequestHttpException) {
+                    $statusCode = $exception->getStatusCode() ?: 400;
+                    $message = $exception->getMessage() ?: 'Invalid request';
+                    return response()->json([
+                        'code' => $statusCode,
+                        'message' => $message
+                    ], $statusCode);
+                } elseif ($exception instanceof HttpException) {
                     $statusCode = $exception->getStatusCode() ?: 400;
                     $message = $exception->getMessage() ?: 'Invalid request';
                     return response()->json([

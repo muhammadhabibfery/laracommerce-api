@@ -21,7 +21,7 @@ trait RegisterValidation
     {
         $this->withExceptionHandling();
 
-        $res = $this->postJson(route('auth.register'));
+        $res = $this->postJson(route('auth.register'), [], $this->header);
 
         $res->assertUnprocessable()
             ->assertJsonCount(5, 'errors');
@@ -36,7 +36,8 @@ trait RegisterValidation
 
         $res = $this->postJson(
             route('auth.register'),
-            $user->toArray()
+            $user->toArray(),
+            $this->header
         );
 
         $res->assertUnprocessable()
@@ -52,7 +53,8 @@ trait RegisterValidation
 
         $res = $this->postJson(
             route('auth.register'),
-            ['password' => 'test', 'password_confirmation' => 'test']
+            ['password' => 'test', 'password_confirmation' => 'test'],
+            $this->header
         );
 
         $res->assertUnprocessable()

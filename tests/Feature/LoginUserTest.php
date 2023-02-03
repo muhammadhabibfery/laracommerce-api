@@ -27,7 +27,7 @@ class LoginUserTest extends TestCase
             array_merge($this->data, ['password' => Hash::make($this->data['password'])])
         );
 
-        $res = $this->postJson(route('auth.login'), $this->data);
+        $res = $this->postJson(route('auth.login'), $this->data, $this->header);
 
         $res->assertOk()
             ->assertJson(
