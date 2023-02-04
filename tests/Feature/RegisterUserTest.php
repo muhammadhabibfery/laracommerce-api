@@ -6,12 +6,11 @@ use Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Validations\RegisterValidation as ValidationTest;
 
 class RegisterUserTest extends TestCase
 {
-    use RefreshDatabase, ValidationTest;
+    use ValidationTest;
 
     public function setUp(): void
     {

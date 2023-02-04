@@ -8,7 +8,7 @@ trait RegisterValidation
 {
 
     public array $data = [
-        'name' => 'john lennon',
+        'name' => 'John Lennon',
         'username' => 'johnlennon',
         'email' => 'jl@gmail.com',
         'phone' => '081236543123',

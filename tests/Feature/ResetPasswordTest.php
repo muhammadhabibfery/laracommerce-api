@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Lang;
@@ -13,7 +12,7 @@ use Tests\Validations\ResetPasswordValidation;
 
 class ResetPasswordTest extends TestCase
 {
-    use RefreshDatabase, ResetPasswordValidation;
+    use ResetPasswordValidation;
 
     public function setUp(): void
     {

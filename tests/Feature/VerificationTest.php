@@ -7,11 +7,10 @@ use App\Models\User;
 use App\Http\Middleware\ValidateSignature;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\Validations\VerificationValidation;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class VerificationTest extends TestCase
 {
-    use RefreshDatabase, VerificationValidation;
+    use VerificationValidation;
 
     public array $userData;
     public User $user;

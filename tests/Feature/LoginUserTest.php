@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
@@ -12,7 +11,7 @@ use Tests\Validations\LoginValidation;
 
 class LoginUserTest extends TestCase
 {
-    use RefreshDatabase, LoginValidation;
+    use LoginValidation;
 
     public function setUp(): void
     {

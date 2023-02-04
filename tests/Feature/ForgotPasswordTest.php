@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -11,7 +10,7 @@ use Tests\Validations\ForgotPasswordValidation;
 
 class ForgotPasswordTest extends TestCase
 {
-    use RefreshDatabase, ForgotPasswordValidation;
+    use ForgotPasswordValidation;
 
     public array $email = ['email' => 'jl@g.com'];
 
