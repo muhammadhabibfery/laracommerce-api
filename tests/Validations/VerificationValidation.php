@@ -56,7 +56,7 @@ trait VerificationValidation
 
         $this->authenticatedUser(['email_verified_at' => null]);
 
-        $res = $this->getJson('/api/user', $this->header);
+        $res = $this->postJson(route('auth.logout'), [], $this->header);
 
         $res->assertForbidden()
             ->assertJsonPath('message', 'Your email address is not verified.');

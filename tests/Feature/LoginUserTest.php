@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Testing\Fluent\AssertableJson;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 use Tests\Validations\LoginValidation;
 
@@ -42,5 +43,17 @@ class LoginUserTest extends TestCase
             array_merge(Arr::except($user->toArray(), ['updated_at', 'created_at', 'email_verified_at']), ['role' => json_encode($user->toArray()['role'])])
         )
             ->assertDatabaseCount('users', 1);
+    }
+
+    /** @test */
+    public function a_user_can_logout()
+    {
+        $user = $this->authenticatedUser();
+        $user->createToken('customer-token', $user->role);
+
+        $res = $this->postJson(route('auth.logout'), [], $this->header);
+
+        $res->assertOk()
+            ->assertJsonPath('message', 'Logged out succesfully.');
     }
 }

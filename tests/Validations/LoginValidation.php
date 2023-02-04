@@ -36,4 +36,15 @@ trait LoginValidation
             ->assertJsonPath('errors.username.0', 'The credentials does not match.')
             ->assertJsonCount(1, 'errors');
     }
+
+    /** @test */
+    public function unautheticated_user_cannot_access_authenticated_routes()
+    {
+        $this->withExceptionHandling();
+
+        $res = $this->postJson(route('auth.logout'), [], $this->header);
+
+        $res->assertUnauthorized()
+            ->assertJsonPath('message', 'Unauthenticated.');
+    }
 }
