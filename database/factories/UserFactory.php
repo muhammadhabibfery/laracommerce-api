@@ -33,7 +33,7 @@ class UserFactory extends Factory
             'status' => fake()->randomElement(['ACTIVE', 'INACTIVE']),
             'address' => fake()->address(),
             'email_verified_at' => now(),
-            'password' => Hash::make('password'), // password
+            'password' => Hash::make('password@123'), // password
             'remember_token' => Str::random(10),
         ];
     }

@@ -14,5 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/dashboard', function () {
+    return request()->user();
+});
 $routes = glob(__DIR__ . "/api/*.php");
 foreach ($routes as $route) require($route);

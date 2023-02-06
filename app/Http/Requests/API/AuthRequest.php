@@ -25,12 +25,12 @@ class AuthRequest extends FormRequest
      */
     public function rules()
     {
-        if (request()->is('api/register'))
+        if ($this->is('api/register'))
             return [
                 'name' => ['required', 'min:3', 'max:100'],
                 'username' => ['required', 'alpha_dash', 'unique:users,username'],
                 'email' => ['required', 'email', 'unique:users,email'],
-                'phone' => ['required', 'digits_between:10,12', 'unique:users,phone'],
+                'phone' => ['required', 'digits_between:12,13', 'unique:users,phone'],
                 'password' => [
                     'required', 'string', 'confirmed',
                     Password::min(8)
@@ -39,7 +39,7 @@ class AuthRequest extends FormRequest
                 ],
             ];
 
-        if (request()->is('api/login'))
+        if ($this->is('api/login'))
             return [
                 'username' => ['required', 'string'],
                 'password' => ['required', 'string']
