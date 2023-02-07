@@ -11,7 +11,7 @@ trait ProfileValidation
         $user = $this->authenticatedUser(['username' => 'johnlennon']);
         $user2 = $this->createUser(['username' => 'paulmccarthney']);
 
-        $res = $this->postJson(
+        $res = $this->patchJson(
             route('profile.update-profile'),
             array_merge($user->toArray(), ['username' => $user2->username, 'phone' => $user2->phone, 'email' => $user2->email]),
             $this->header
@@ -29,7 +29,7 @@ trait ProfileValidation
         $this->withExceptionHandling();
         $this->authenticatedUser(['username' => 'johnlennon']);
 
-        $res = $this->postJson(
+        $res = $this->patchJson(
             route('profile.change-password'),
             ['current_password' => 'password@123', 'new_password' => 'abcd', 'new_password_confirmation' => 'abcd'],
             $this->header
@@ -47,7 +47,7 @@ trait ProfileValidation
         $this->withExceptionHandling();
         $this->authenticatedUser(['username' => 'johnlennon']);
 
-        $res = $this->postJson(
+        $res = $this->patchJson(
             route('profile.change-password'),
             ['current_password' => 'password@123', 'new_password' => 'abcd@12345', 'new_password_confirmation' => 'abcd'],
             $this->header
@@ -63,7 +63,7 @@ trait ProfileValidation
         $this->withExceptionHandling();
         $this->authenticatedUser(['username' => 'johnlennon']);
 
-        $res = $this->postJson(
+        $res = $this->patchJson(
             route('profile.change-password'),
             ['current_password' => 'abcd', 'new_password' => 'abcd@1234', 'new_password_confirmation' => 'abcd@1234'],
             $this->header
@@ -79,7 +79,7 @@ trait ProfileValidation
         $this->withExceptionHandling();
         $this->authenticatedUser(['username' => 'johnlennon']);
 
-        $res = $this->postJson(
+        $res = $this->patchJson(
             route('profile.change-password'),
             ['current_password' => 'password@123', 'new_password' => 'password@123', 'new_password_confirmation' => 'password@123'],
             $this->header

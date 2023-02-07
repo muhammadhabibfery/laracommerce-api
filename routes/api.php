@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,5 +18,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/dashboard', function () {
     return request()->user();
 });
+
 $routes = glob(__DIR__ . "/api/*.php");
 foreach ($routes as $route) require($route);

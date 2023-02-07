@@ -23,8 +23,8 @@ use App\Models\User;
 
 Route::middleware(['auth:sanctum', 'verified'])
     ->group(function () {
-        Route::post("/profile/update-profile", [ProfileController::class, "editProfile"])
+        Route::patch("/profile/update-profile", [ProfileController::class, "editProfile"])
             ->name("profile.update-profile");
-        Route::post("/profile/change-password", [ProfileController::class, "changePassword"])
+        Route::patch("/profile/change-password", [ProfileController::class, "changePassword"])
             ->name("profile.change-password");
     });

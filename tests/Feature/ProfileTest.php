@@ -22,7 +22,7 @@ class ProfileTest extends TestCase
     {
         $user = $this->authenticatedUser(['username' => 'johnlennon']);
 
-        $res = $this->postJson(
+        $res = $this->patchJson(
             route('profile.update-profile'),
             array_merge($user->toArray(), ['name' => 'john lennon']),
             $this->header
@@ -43,7 +43,7 @@ class ProfileTest extends TestCase
     {
         $this->authenticatedUser();
 
-        $res = $this->postJson(
+        $res = $this->patchJson(
             route('profile.change-password'),
             ['current_password' => 'password@123', 'new_password' => 'password@1234', 'new_password_confirmation' => 'password@1234'],
             $this->header
