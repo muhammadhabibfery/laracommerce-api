@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
             ->for($province)
             ->create();
 
-        foreach (['SUPERADMIN', 'ADMIN', 'MERCHANT'] as $role)
+        foreach (['ADMIN', 'STAFF', 'MERCHANT'] as $role)
             $user[strtolower($role)] = User::factory()->create(['role' => $role]);
 
         $this->call([

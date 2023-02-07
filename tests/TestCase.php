@@ -2,6 +2,10 @@
 
 namespace Tests;
 
+use App\Models\Banking;
+use App\Models\Category;
+use App\Models\MerchantAccount;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -40,5 +44,48 @@ abstract class TestCase extends BaseTestCase
         $user = $this->createUser($data);
         Sanctum::actingAs($user, ['*']);
         return $user;
+    }
+
+    /**
+     * Create a merchant account instance.
+     *
+     * @param  array $data
+     * @return MerchantAccount
+     */
+    public function createMerchantAccount(?array $data = []): MerchantAccount
+    {
+        return MerchantAccount::factory()->create($data);
+    }
+    /**
+     * Create a product instance.
+     *
+     * @param  array $data
+     * @return Product
+     */
+    public function createProduct(?array $data = []): Product
+    {
+        return Product::factory()->create($data);
+    }
+
+    /**
+     * Create a category instance.
+     *
+     * @param  array $data
+     * @return Category
+     */
+    public function createCategory(?array $data = []): Category
+    {
+        return Category::factory()->create($data);
+    }
+
+    /**
+     * Create a banking instance.
+     *
+     * @param  array $data
+     * @return Banking
+     */
+    public function createBanking(?array $data = []): Banking
+    {
+        return Banking::factory()->create($data);
     }
 }

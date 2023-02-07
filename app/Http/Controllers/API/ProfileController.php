@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\API\ProfileRequest;
 use App\Http\Resources\UserResource;
 use App\Traits\Profile;
+use ErrorException;
 use Illuminate\Http\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -37,7 +38,7 @@ class ProfileController extends Controller
             return to_route('dashboard')->with('success', self::PROFILE_SUCCESS);
         }
 
-        throw new \Exception(self::FAILED, Response::HTTP_INTERNAL_SERVER_ERROR);
+        throw new ErrorException(self::FAILED, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -53,7 +54,7 @@ class ProfileController extends Controller
                 ? $this->wrapResponse(Response::HTTP_OK, self::PASSWORD_SUCCESS)
                 : to_route('dashboard')->with('success', self::PASSWORD_SUCCESS);
 
-        throw new \Exception(self::FAILED, Response::HTTP_INTERNAL_SERVER_ERROR);
+        throw new ErrorException(self::FAILED, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**

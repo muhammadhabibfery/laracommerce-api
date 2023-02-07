@@ -6,60 +6,39 @@ use Illuminate\Support\Arr;
 
 trait ProductValidation
 {
-
-    public array $data = [
-        'name' => 'John Lennon',
-        'username' => 'johnlennon',
-        'email' => 'jl@gmail.com',
-        'phone' => '081236543123',
-        'password' => 'secret@123',
-        'password_confirmation' => 'secret@123'
-    ];
-
     /** @test */
     public function all_fields_are_required()
     {
         $this->withExceptionHandling();
 
-        $res = $this->postJson(route('auth.register'), [], $this->header);
+        $res = $this->postJson(route('products.store'), [], $this->header);
 
         $res->assertUnprocessable()
-            ->assertJsonCount(5, 'errors');
+            ->assertJsonCount(6, 'errors');
     }
 
     /** @test */
-    public function username_email_and_phone_fields_should_be_unique()
+    public function the_category_id_field_should_be_exists()
     {
         $this->withExceptionHandling();
 
-        $user = $this->createUser(Arr::except($this->data, ['password_confirmation']));
-
-        $res = $this->postJson(
-            route('auth.register'),
-            $user->toArray(),
-            $this->header
-        );
+        $res = $this->postJson(route('products.store'), ['category_id' => 99], $this->header);
 
         $res->assertUnprocessable()
-            ->assertJsonPath('errors.username', ['The username has already been taken.'])
-            ->assertJsonPath('errors.email', ['The email has already been taken.'])
-            ->assertJsonPath('errors.phone', ['The phone has already been taken.']);
+            ->assertJsonPath('errors.category_id.0', 'The selected category is invalid.');
     }
 
     /** @test */
-    public function a_password_field_should_be_follow_the_password_rules()
+    public function the_name_field_should_be_unique()
     {
         $this->withExceptionHandling();
 
-        $res = $this->postJson(
-            route('auth.register'),
-            ['password' => 'test', 'password_confirmation' => 'test'],
-            $this->header
-        );
+        $product = Arr::except($this->createProduct()->toArray(), ['merchant_account_id']);
+        $product = array_merge($product, ['categoryId' => $product['category_id']]);
+
+        $res = $this->postJson(route('products.store'), $product, $this->header);
 
         $res->assertUnprocessable()
-            ->assertJsonPath('errors.password.0', 'The password must be at least 8 characters.')
-            ->assertJsonPath('errors.password.1', 'The password must contain at least one symbol.')
-            ->assertJsonPath('errors.password.2', 'The password must contain at least one number.');
+            ->assertJsonPath('errors.name.0', 'The name has already been taken.');
     }
 }

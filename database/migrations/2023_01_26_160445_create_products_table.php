@@ -22,7 +22,7 @@ return new class extends Migration
             $table->longText('description');
             $table->unsignedInteger('price');
             $table->unsignedInteger('weight');
-            $table->unsignedInteger('stock');
+            $table->unsignedInteger('stock')->default(1);
             $table->unsignedInteger('sold')->nullable();
             $table->timestamps();
         });

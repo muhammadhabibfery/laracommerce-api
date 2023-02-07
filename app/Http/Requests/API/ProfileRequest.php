@@ -17,7 +17,7 @@ class ProfileRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -28,7 +28,7 @@ class ProfileRequest extends FormRequest
      * @return array<string, mixed>
      *
      */
-    public function rules()
+    public function rules(): array
     {
         if ($this->is('api/profile/update-profile'))
             return [
@@ -58,7 +58,7 @@ class ProfileRequest extends FormRequest
      *
      * @return void
      */
-    protected function prepareForValidation()
+    protected function prepareForValidation(): void
     {
         $request = $this->request->all();
 
