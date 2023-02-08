@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Models\Category;
-use App\Models\MerchantAccount;
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Category;
+use Illuminate\Support\Arr;
+use App\Models\MerchantAccount;
 use Tests\Validations\ProductValidation;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Arr;
 use Illuminate\Testing\Fluent\AssertableJson;
 
 class ProductTest extends TestCase

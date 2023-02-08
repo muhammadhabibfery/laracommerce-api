@@ -2,8 +2,6 @@
 
 namespace App\Traits;
 
-use App\Http\Requests\API\ProfileRequest;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 trait ImageHandler
@@ -11,12 +9,12 @@ trait ImageHandler
     /**
      * create image file and save to application directory
      *
-     * @param  Request|ProfileRequest $request
+     * @param  object $request
      * @param  string|null $fileName
      * @param  string $directory
      * @return void
      */
-    private function createImage(Request|ProfileRequest $request, ?string $fileName = null, string $directory): void
+    private function createImage(object $request, ?string $fileName = null, string $directory): void
     {
 
         if ($request->hasFile('image')) Storage::putFileAs($directory, $request->file('image'), $fileName);
@@ -25,12 +23,12 @@ trait ImageHandler
     /**
      * set the image file
      *
-     * @param  Request|ProfileRequest $request
+     * @param  object $request
      * @param  string $directory
      * @param  string|null $oldImage
      * @return string|null
      */
-    private function setImageFile(Request|ProfileRequest $request, string $directory, ?string $oldImage = null): string|null
+    private function setImageFile(object $request, string $directory, ?string $oldImage = null): string|null
     {
         $fileName = $oldImage;
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\API\ProductImageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,8 +15,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum', 'verified', 'authRole:MERCHANT'])
-    ->prefix('merchant')
+Route::prefix('merchant')
+    ->middleware(['auth:sanctum', 'verified', 'authRole:MERCHANT'])
     ->group(function () {
         Route::apiResource("products", ProductController::class);
+        Route::apiResource("product-images", ProductImageController::class)
+            ->except(['index', 'show', 'update']);
+        Route::get("product-images/{product}", [ProductImageController::class, "index"])->name("product-images.index");
     });

@@ -6,6 +6,7 @@ use App\Models\Banking;
 use App\Models\Category;
 use App\Models\MerchantAccount;
 use App\Models\Product;
+use App\Models\ProductImage;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -56,6 +57,7 @@ abstract class TestCase extends BaseTestCase
     {
         return MerchantAccount::factory()->create($data);
     }
+
     /**
      * Create a product instance.
      *
@@ -65,6 +67,17 @@ abstract class TestCase extends BaseTestCase
     public function createProduct(?array $data = []): Product
     {
         return Product::factory()->create($data);
+    }
+
+    /**
+     * Create a product image instance.
+     *
+     * @param  array $data
+     * @return ProductImage
+     */
+    public function createProductImage(?array $data = []): ProductImage
+    {
+        return ProductImage::factory()->create($data);
     }
 
     /**

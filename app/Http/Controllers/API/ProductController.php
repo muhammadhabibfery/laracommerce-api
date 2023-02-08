@@ -9,14 +9,14 @@ use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Closure;
 use ErrorException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller
 {
-    private const CREATE_SUCCESS = 'The product created successfully.', UPDATE_SUCCESS = 'The product updated successfully.', DELETE_SUCCESS = 'The product deleted successfully.',
-        FAILED = 'Failed to get service, please try again.';
+    private const CREATE_SUCCESS = 'The product created successfully.', UPDATE_SUCCESS = 'The product updated successfully.', DELETE_SUCCESS = 'The product deleted successfully.', FAILED = 'Failed to get service, please try again.';
 
     private int $merchantId;
 
@@ -51,7 +51,7 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request): JsonResponse
     {
-        if ($product = Product::create($request->validated())) {
+        if ($product = Product::create($request->validatedProduct())) {
             $product = (new ProductResource($product))
                 ->response()
                 ->getData(true);
@@ -86,7 +86,7 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, Product $product): JsonResponse
     {
-        if ($product->update($request->validated())) {
+        if ($product->update($request->validatedProduct())) {
             $product = (new ProductResource($product))
                 ->response()
                 ->getData(true);
@@ -139,10 +139,18 @@ class ProductController extends Controller
      */
     public function getProductsBySearch(Request $request, int $number): LengthAwarePaginator
     {
-        return Product::where('name', 'LIKE', "%{$request->keyword}%")
+        $products = Product::where('name', 'LIKE', "%{$request->keyword}%")
             ->where('merchant_account_id', $this->merchantId)
             ->latest()
             ->paginate($number)
             ->appends($request->query());
+
+        if (isset($request->keyword)) {
+            if (count($products) > 0) return $products;
+
+            throw new ModelNotFoundException("Product not found.");
+        };
+
+        return $products;
     }
 }

@@ -57,7 +57,6 @@ class Product extends Model
     public function setNameAttribute(string $value): void
     {
         $this->attributes['name'] = str($value)->title()->value();
-        $this->attributes['slug'] = str($value)->slug()->value();
     }
 
     /**

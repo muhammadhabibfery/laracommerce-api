@@ -60,7 +60,7 @@ class Handler extends ExceptionHandler
                 if ($exception instanceof NotFoundHttpException) {
                     $statusCode = $exception->getStatusCode() ?: 404;
                     // $message = $exception->getMessage() ? str_replace('/', '//', $exception->getMessage()) : 'Endpoint not found';
-                    $message = str_contains($exception->getMessage(), 'The route') ? 'Endpoint not found' : $exception->getMessage();
+                    $message = str_contains($exception->getMessage(), 'The route') ? 'Endpoint not found.' : (str_contains($exception->getMessage(), 'No query results') ? str_replace(']', '', last(explode('\\', $exception->getMessage()))) . ' not found.' : $exception->getMessage());
                     return response()->json([
                         'code' => $statusCode,
                         'message' => $message
@@ -88,7 +88,7 @@ class Handler extends ExceptionHandler
                         'code' => $statusCode,
                         'message' => $exception->getMessage(),
                     ], $statusCode);
-                } elseif ($exception instanceof BadRequestHttpException) {
+                } elseif ($exception instanceof BadRequestHttpException || $exception instanceof BadRequestHttpException) {
                     $statusCode = $exception->getStatusCode() ?: 400;
                     $message = $exception->getMessage() ?: 'Invalid request';
                     return response()->json([

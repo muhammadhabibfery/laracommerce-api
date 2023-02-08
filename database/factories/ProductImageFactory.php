@@ -17,13 +17,7 @@ class ProductImageFactory extends Factory
      */
     public function definition()
     {
-        // $source = public_path('images');
-        // $target = storage_path('app/public/product-images');
-        // if (!file_exists($target)) mkdir($target, 666, true);
-        // $name = fake()->file($source, $target, false);
-        // $slug = str($name)->slug();
-
-        $name = fake()->word();
+        $name = fake()->word() . rand(1, 999) . ".jpg";
         return [
             'product_id' => Product::factory(),
             'name' => $name,

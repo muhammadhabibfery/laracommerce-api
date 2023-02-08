@@ -24,22 +24,40 @@ class ProductRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'category_id' => ['required', 'integer', 'exists:categories,id'],
             'merchant_account_id' => ['required', 'integer', 'exists:merchant_accounts,id'],
-            'name' => [
-                'required',
-                'string',
-                'max:100',
-                Rule::unique('products', 'name')->where(
-                    fn ($query) => $query->whereNot('merchant_account_id', $this->all()['merchant_account_id'])
-                )->ignore($this->user()),
-            ],
             'description' => ['required', 'string'],
             'price' => ['required', 'integer', 'min:1'],
             'weight' => ['required', 'integer', 'min:1'],
             'stock' => ['sometimes', 'integer', 'min:1'],
         ];
+
+        if ($this->routeIs('products.store'))
+            return array_merge(
+                $rules,
+                ['name' => [
+                    'required',
+                    'string',
+                    'max:100',
+                    Rule::unique('products', 'name')->where(
+                        fn ($query) => $query->where('merchant_account_id', $this->all()['merchant_account_id'])
+                    )
+                ]]
+            );
+
+        if ($this->routeIs('products.update'))
+            return array_merge(
+                $rules,
+                ['name' => [
+                    'required',
+                    'string',
+                    'max:100',
+                    Rule::unique('products', 'name')->where(
+                        fn ($query) => $query->where('merchant_account_id', $this->all()['merchant_account_id'])
+                    )->ignore($this->product->id)
+                ]]
+            );
     }
 
     /**
@@ -68,6 +86,22 @@ class ProductRequest extends FormRequest
     {
         return [
             'category_id.exists' => 'The selected category is invalid.',
+            'category_id.required' => 'The category is required.',
         ];
+    }
+
+    /**
+     * merge the validated request with additional data
+     *
+     * @return array
+     */
+    public function validatedProduct(): array
+    {
+        return $this->routeIs('products.store')
+            ? array_merge(
+                $this->validated(),
+                ['slug' =>  str($this->validated()['name'])->slug()->value() . '-' . head(explode('-', $this->user()->username)) . rand(111, 999)]
+            )
+            : array_merge($this->validated(), ['slug' => $this->product->slug]);
     }
 }
