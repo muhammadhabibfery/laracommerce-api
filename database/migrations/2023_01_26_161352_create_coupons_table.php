@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('coupons', function (Blueprint $table) {
             $table->id();
             $table->foreignId('merchant_account_id')->onDelete('cascade');
-            $table->string('name', 50)->unique();
+            $table->string('name', 50);
             $table->string('slug', 100)->unique()->index();
             $table->dateTime('expired');
             $table->timestamps();

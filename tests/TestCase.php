@@ -2,15 +2,16 @@
 
 namespace Tests;
 
-use App\Models\Banking;
-use App\Models\Category;
-use App\Models\MerchantAccount;
-use App\Models\Product;
-use App\Models\ProductImage;
 use App\Models\User;
+use App\Models\Coupon;
+use App\Models\Banking;
+use App\Models\Product;
+use App\Models\Category;
+use App\Models\ProductImage;
+use Laravel\Sanctum\Sanctum;
+use App\Models\MerchantAccount;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Laravel\Sanctum\Sanctum;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -78,6 +79,17 @@ abstract class TestCase extends BaseTestCase
     public function createProductImage(?array $data = []): ProductImage
     {
         return ProductImage::factory()->create($data);
+    }
+
+    /**
+     * Create a coupon instance.
+     *
+     * @param  array $data
+     * @return Coupon
+     */
+    public function createCoupon(?array $data = []): Coupon
+    {
+        return Coupon::factory()->create($data);
     }
 
     /**

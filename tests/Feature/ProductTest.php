@@ -63,7 +63,7 @@ class ProductTest extends TestCase
         $res->assertOk()
             ->assertJson(
                 fn (AssertableJson $json) =>
-                $json->hasAll(['code', 'message', 'data'])
+                $json->hasAll(['code', 'message', 'data', 'pages'])
                     ->count('data', 2)
             )->assertJsonPath('data.0.name', $product1->name)
             ->assertJsonPath('data.1.name', $product2->name);
@@ -84,7 +84,7 @@ class ProductTest extends TestCase
         $res->assertOk()
             ->assertJson(
                 fn (AssertableJson $json) =>
-                $json->hasAll(['code', 'message', 'data'])
+                $json->hasAll(['code', 'message', 'data', 'pages'])
                     ->count('data', 1)
             )->assertJsonPath('data.0.name', $product2->name);
 

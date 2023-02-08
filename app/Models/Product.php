@@ -49,7 +49,7 @@ class Product extends Model
     }
 
     /**
-     * set the product's name and slug
+     * set the product's name
      *
      * @param  string $value
      * @return void
@@ -76,7 +76,7 @@ class Product extends Model
      * @param  string|null  $field
      * @return \Illuminate\Database\Eloquent\Model|null
      */
-    public function resolveRouteBinding($value, $field = null)
+    public function resolveRouteBinding($value, $field = null): Model|null
     {
         $result = $this->where('slug', $value);
 

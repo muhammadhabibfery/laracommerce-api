@@ -26,4 +26,41 @@ class Coupon extends Model
     {
         return $this->belongsTo(MerchantAccount::class);
     }
+
+    /**
+     * set the coupon's name
+     *
+     * @param  string $value
+     * @return void
+     */
+    public function setNameAttribute(string $value): void
+    {
+        $this->attributes['name'] = str($value)->title()->value();
+    }
+
+    /**
+     * Get the route key for the model.
+     *
+     * @return string
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    /**
+     * Retrieve the model for a bound value.
+     *
+     * @param  mixed  $value
+     * @param  string|null  $field
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function resolveRouteBinding($value, $field = null): Model|null
+    {
+        $result = $this->where('slug', $value);
+
+        if (request()->is('api/merchant/*')) $result->where('merchant_account_id', request()->user()->merchantAccount->id);
+
+        return $result->firstOrFail();
+    }
 }

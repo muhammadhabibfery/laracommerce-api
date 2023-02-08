@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\MerchantAccount;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -23,7 +24,7 @@ class CouponFactory extends Factory
             'merchant_account_id' => MerchantAccount::factory(),
             'name' => $name,
             'slug' => str($name)->slug(),
-            'expired' => now()->addDays(rand(1, 5))
+            'expired' => Carbon::parse(now()->addDays(rand(3, 10)))->format(config('app.date_format'))
         ];
     }
 }

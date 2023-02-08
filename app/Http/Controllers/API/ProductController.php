@@ -56,7 +56,7 @@ class ProductController extends Controller
                 ->response()
                 ->getData(true);
 
-            return $this->wrapResponse(Response::HTTP_CREATED, 'The product created successfully', $product);
+            return $this->wrapResponse(Response::HTTP_CREATED, self::CREATE_SUCCESS, $product);
         }
 
         throw new ErrorException(self::FAILED, Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -103,7 +103,7 @@ class ProductController extends Controller
      * @param  Product  $product
      * @return JsonResponse
      */
-    public function destroy(Product $product)
+    public function destroy(Product $product): JsonResponse
     {
         if ($product->delete()) return $this->wrapResponse(Response::HTTP_OK, self::DELETE_SUCCESS);
 
@@ -125,7 +125,12 @@ class ProductController extends Controller
             'message' => $message
         ];
 
-        if (count($resource)) $result = array_merge($result, ['data' => $resource['data']]);
+        if (count($resource)) {
+            $result = array_merge($result, ['data' => $resource['data']]);
+
+            if (count($resource) > 1)
+                $result = array_merge($result, ['pages' => ['links' => $resource['links'], 'meta' => $resource['meta']]]);
+        }
 
         return response()->json($result, $code);
     }
