@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('banking_id')->nullable()->onDelete('cascade');
             $table->foreignId('user_id')->onDelete('cascade');
-            $table->string('name', 100)->unique();
+            $table->string('name', 100);
             $table->string('slug', 100)->unique()->index();
             $table->text('address');
             $table->string('bank_account_name', 100)->nullable()->unique();

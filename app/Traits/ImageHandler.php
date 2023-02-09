@@ -16,7 +16,6 @@ trait ImageHandler
      */
     private function createImage(object $request, ?string $fileName = null, string $directory): void
     {
-
         if ($request->hasFile('image')) Storage::putFileAs($directory, $request->file('image'), $fileName);
     }
 

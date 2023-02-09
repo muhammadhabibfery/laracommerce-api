@@ -18,13 +18,13 @@ class MerchantAccountFactory extends Factory
      */
     public function definition()
     {
-        $name = fake()->unique()->company();
+        $name = fake()->unique()->name();
 
         return [
             'banking_id' => (Banking::inRandomOrder()->first())->id,
             'user_id' => User::factory(),
             'name' => $name,
-            'slug' => str($name)->slug(),
+            'slug' => str($name)->slug()->value(),
             'address' => fake()->address(),
             'bank_account_name' => fake()->unique()->name(),
             'bank_account_number' => rand(111111111111111, 999999999999999),

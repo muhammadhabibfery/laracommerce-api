@@ -21,6 +21,7 @@ class ProductImageTest extends TestCase
     public MerchantAccount $merchant;
     public Category $category;
     public Product $product;
+    public string $directory = 'product-images';
 
     public function setUp(): void
     {
@@ -36,8 +37,7 @@ class ProductImageTest extends TestCase
     /** @test */
     public function merchant_can_create_product_image()
     {
-        $directory = 'product-images';
-        Storage::fake($directory);
+        Storage::fake($this->directory);
         $file = UploadedFile::fake()->image('beatles.jpg')->size(2000);
 
         $res = $this->postJson(route('product-images.store'), ['productId' => $this->product->id, 'image' => $file]);
@@ -50,9 +50,7 @@ class ProductImageTest extends TestCase
 
         $name = last(explode('/', $res->json()['data']['name']));
         $this->assertDatabaseHas('product_images', ['name' => $name]);
-        Storage::disk($directory)->exists($name);
-        Storage::delete("$directory/$name");
-        Storage::deleteDirectory($directory);
+        $this->deleteDirectory($this->directory, $name);
     }
 
     /** @test */
@@ -91,7 +89,6 @@ class ProductImageTest extends TestCase
             )->assertJsonPath('message', 'The product image deleted successfully.');
 
         $this->assertDatabaseMissing('product_images', ['name' => $name]);
-        Storage::disk($directory)->assertMissing($name);
-        Storage::deleteDirectory($directory);
+        $this->deleteDirectory($this->directory, $name, true);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Banking extends Model
 {
@@ -15,6 +16,11 @@ class Banking extends Model
      * @var array<int, string>
      */
     protected $guarded = [];
+
+    public function merchantAccounts(): HasMany
+    {
+        return $this->hasMany(MerchantAccount::class);
+    }
 
     /**
      * set the banking's name

@@ -47,4 +47,73 @@ class MerchantAccount extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Get the banking that owns the merchant account
+     *
+     * @return BelongsTo
+     */
+    public function banking(): BelongsTo
+    {
+        return $this->belongsTo(Banking::class);
+    }
+
+    /**
+     * set the merchant account's name and slug.
+     *
+     * @param  string $value
+     * @return void
+     */
+    public function setNameAttribute(string $value): void
+    {
+        $this->attributes['name'] = str($value)->title()->value();
+        $this->attributes['slug'] = str($value)->slug()->value();
+    }
+
+    /**
+     * set the bank account's name.
+     *
+     * @param  string $value
+     * @return void
+     */
+    public function setBankAccountNameAttribute(string $value): void
+    {
+        $this->attributes['bank_account_name'] = str($value)->title()->value();
+    }
+
+    /**
+     * get product image's name as file
+     *
+     * @return mixed
+     */
+    public function getImage()
+    {
+        return $this->image ? asset('storage/merchant-images/' . $this->image) : asset('images/no-image.png');
+    }
+
+    /**
+     * Get the route key for the model.
+     *
+     * @return string
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    /**
+     * Retrieve the model for a bound value.
+     *
+     * @param  mixed  $value
+     * @param  string|null  $field
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function resolveRouteBinding($value, $field = null): Model|null
+    {
+        $result = $this->where('slug', $value);
+
+        if (request()->is('api/merchant/*')) $result->where('user_id', request()->user()->id);
+
+        return $result->firstOrFail();
+    }
 }

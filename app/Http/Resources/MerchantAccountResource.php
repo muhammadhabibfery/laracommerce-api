@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Http\Resources;
+
+use App\Http\Resources\UserResource;
+use App\Http\Resources\BankingResource;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class MerchantAccountResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     */
+    public function toArray($request)
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'address' => $this->address,
+            'bank_account_name' => $this->bank_account_name,
+            'bank_account_number' => $this->bank_account_number,
+            'bank_branch_name' => $this->bank_branch_name,
+            'image' => $this->getImage(),
+            'banking' => $this->whenLoaded('banking', fn () => new BankingResource($this->banking)),
+            'user' => $this->whenLoaded('user', fn () => new UserResource($this->user))
+        ];
+    }
+}
