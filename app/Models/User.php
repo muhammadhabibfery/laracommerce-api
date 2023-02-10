@@ -13,6 +13,7 @@ use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
@@ -64,6 +65,16 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     public function finance(): HasOne
     {
         return $this->hasOne(Finance::class);
+    }
+
+    /**
+     * The orders that belong to the user
+     *
+     * @return BelongsToMany
+     */
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
     }
 
     /**

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('order_id')->onDelete('cascade');
             $table->foreignId('product_id')->onDelete('cascade');
             $table->unsignedInteger('quantity');
+            $table->unsignedInteger('total_price');
             $table->timestamps();
         });
     }

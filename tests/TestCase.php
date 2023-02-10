@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\ProductImage;
 use Laravel\Sanctum\Sanctum;
 use App\Models\MerchantAccount;
+use App\Models\Order;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -113,6 +114,17 @@ abstract class TestCase extends BaseTestCase
     public function createBanking(?array $data = []): Banking
     {
         return Banking::factory()->create($data);
+    }
+
+    /**
+     * Create an order instance.
+     *
+     * @param  array $data
+     * @return Order
+     */
+    public function createOrder(?array $data = []): Order
+    {
+        return Order::factory()->create($data);
     }
 
     public function deleteDirectory(string $directory, string $fileName, ?bool $delete = false): void

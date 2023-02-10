@@ -19,10 +19,12 @@ class ProductResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
-            'price' => $this->price,
+            'price' => currencyFormat($this->price),
             'weight' => $this->weight,
             'stock' => $this->stock,
             'sold' => $this->sold ?: 0,
+            'quantity' => $this->whenPivotLoaded('order_product', fn () => $this->pivot->quantity),
+            'totalPrice' => $this->whenPivotLoaded('order_product', fn () => currencyFormat($this->pivot->total_price)),
             // 'merchant' => $this->merchant_account_id,
             'category' => $this->whenLoaded('category', fn () => new CategoryResource($this->category)),
         ];
