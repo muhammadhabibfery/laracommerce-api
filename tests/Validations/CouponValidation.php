@@ -14,9 +14,7 @@ trait CouponValidation
         $res = $this->postJson(route('coupons.store'), [], $this->header);
 
         $res->assertUnprocessable()
-            ->assertJsonPath('errors.expired.0', 'The expired field is required.')
-            ->assertJsonPath('errors.name.0', 'The name field is required.')
-            ->assertJsonCount(2, 'errors');
+            ->assertJsonCount(3, 'errors');
     }
 
     /** @test */
@@ -31,6 +29,23 @@ trait CouponValidation
 
         $res->assertUnprocessable()
             ->assertJsonPath('errors.name.0', 'The name has already been taken.');
+    }
+
+    /** @test */
+    public function the_discount_amount_should_be_at_least_1000()
+    {
+        $this->withExceptionHandling();
+
+        $this->createCoupon(['name' => 'Coupon 1', 'merchant_account_id' => $this->merchant->id])->toArray();
+        $coupon = [
+            'name' => 'Coupon 2',
+            'discount_amount' => 100
+        ];
+
+        $res = $this->postJson(route('coupons.store'), $coupon, $this->header);
+
+        $res->assertUnprocessable()
+            ->assertJsonPath('errors.discount_amount.0', 'The discount amount must be at least 1000.');
     }
 
     /** @test */

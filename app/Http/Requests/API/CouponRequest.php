@@ -26,6 +26,7 @@ class CouponRequest extends FormRequest
     {
         return [
             'merchant_account_id' => ['required', 'integer', 'exists:merchant_accounts,id'],
+            'discount_amount' => ['required', 'integer', 'min:1000'],
             'expired' => ['required', 'date_format:Y-m-d H:i', 'after:tomorrow'],
             'name' => [
                 'required',

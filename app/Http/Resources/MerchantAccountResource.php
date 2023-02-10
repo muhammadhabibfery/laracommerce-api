@@ -21,9 +21,9 @@ class MerchantAccountResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'address' => $this->address,
-            'bank_account_name' => $this->bank_account_name,
-            'bank_account_number' => $this->bank_account_number,
-            'bank_branch_name' => $this->bank_branch_name,
+            'bankAccountName' => $this->bank_account_name,
+            'bankAccountNumber' => $this->bank_account_number,
+            'bankBranchName' => $this->bank_branch_name,
             'image' => $this->getImage(),
             'banking' => $this->whenLoaded('banking', fn () => new BankingResource($this->banking)),
             'user' => $this->whenLoaded('user', fn () => new UserResource($this->user))

@@ -24,6 +24,7 @@ class CouponFactory extends Factory
             'merchant_account_id' => MerchantAccount::factory(),
             'name' => $name,
             'slug' => str($name)->slug(),
+            'discount_amount' => rand(1111, 250000),
             'expired' => Carbon::parse(now()->addDays(rand(3, 10)))->format(config('app.date_format'))
         ];
     }

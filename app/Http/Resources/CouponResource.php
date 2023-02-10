@@ -18,6 +18,7 @@ class CouponResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'slug' => $this->slug,
+            'discountAmount' => currencyFormat($this->discount_amount),
             'expired' => $this->expired,
             // 'merchant' => $this->merchant_account_id,
         ];

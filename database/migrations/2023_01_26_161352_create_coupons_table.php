@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('merchant_account_id')->onDelete('cascade');
             $table->string('name', 50);
             $table->string('slug', 100)->unique()->index();
+            $table->unsignedInteger('discount_amount');
             $table->dateTime('expired');
             $table->timestamps();
         });

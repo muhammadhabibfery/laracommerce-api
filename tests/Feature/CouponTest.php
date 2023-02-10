@@ -32,6 +32,7 @@ class CouponTest extends TestCase
     {
         $coupon = [
             'name' => 'Coupon 1',
+            'discount_amount' => 1000,
             'expired' => Carbon::parse(now()->addDays(3))->format(config('app.date_format'))
         ];
 
