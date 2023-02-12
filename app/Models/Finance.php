@@ -27,4 +27,14 @@ class Finance extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Get the route key for the model.
+     *
+     * @return string
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'invoice_number';
+    }
 }

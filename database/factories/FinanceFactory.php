@@ -19,8 +19,9 @@ class FinanceFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'description' => fake()->sentences(3, true),
             'type' => fake()->randomElement(['DEBIT', 'KREDIT']),
+            'order_id' => 'test-' . rand(111, 999),
+            'description' => fake()->sentences(3, true),
             'amount' => rand(100000, 999000),
             'status' => fake()->randomElement(['PENDING', 'SUCCESS', 'FAILED', 'ACCEPT', 'REJECT']),
             'balance' => rand(1000000, 5000000)

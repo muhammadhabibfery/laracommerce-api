@@ -110,7 +110,7 @@ class MerchantAccount extends Model
      */
     public function resolveRouteBinding($value, $field = null): Model|null
     {
-        $result = $this->where('slug', $value);
+        $result = $this->where($this->getRouteKeyName(), $value);
 
         if (request()->is('api/merchant/*')) $result->where('user_id', request()->user()->id);
 

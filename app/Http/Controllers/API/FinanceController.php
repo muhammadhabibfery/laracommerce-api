@@ -2,40 +2,28 @@
 
 namespace App\Http\Controllers\API;
 
-use Closure;
-use App\Models\Order;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\OrderResource;
+use App\Http\Resources\FinanceResource;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Symfony\Component\HttpFoundation\Response;
 
-class OrderController extends Controller
+class FinanceController extends Controller
 {
-    private int $merchantId;
-
-    public function __construct()
-    {
-        $this->middleware(function (Request $request, Closure $next) {
-            $this->merchantId = $request->user()->merchantAccount->id;
-            return $next($request);
-        });
-    }
-
     /**
      * Display a listing of the resource.
      *
-     * @param Request
+     * @param Request $request
      * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
-        $orders = OrderResource::collection($this->getProductsByMerchantId($request, 6))
+        $finances = FinanceResource::collection($this->getFinancesBySearch($request, 6))
             ->response()
             ->getData(true);
 
-        return $this->wrapResponse(Response::HTTP_OK, 'Success', $orders);
+        return $this->wrapResponse(Response::HTTP_OK, 'Success', $finances);
     }
 
     /**
@@ -52,21 +40,12 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  Order  $order
-     * @return JsonResponse
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
      */
-    public function show(Order $order): JsonResponse
+    public function show($id)
     {
-        $order = $order->load([
-            'products' => fn ($query) => $query->where('merchant_account_id', $this->merchantId)->paginate(6),
-            'totalPriceProductsMerchant' => fn ($query) => $query->where('merchant_account_id', $this->merchantId)
-        ]);
-
-        $order = (new OrderResource($order))
-            ->response()
-            ->getData(true);
-
-        return $this->wrapResponse(Response::HTTP_OK, 'Success', $order);
+        //
     }
 
     /**
@@ -117,12 +96,16 @@ class OrderController extends Controller
         return response()->json($result, $code);
     }
 
-    private function getProductsByMerchantId(Request $request, int $number): LengthAwarePaginator
+    private function getFinancesBySearch(Request $request, int $number): LengthAwarePaginator
     {
-        return Order::withWhereHas(
-            'totalPriceProductsMerchant',
-            fn ($query) => $query->where('merchant_account_id', request()->user()->merchantAccount->id)
-        )->paginate($number)
+        $finances = $request->user()
+            ->finance();
+
+        if (isset($request->type)) $finances->where('type', $request->type);
+
+        if (isset($request->status)) $finances->where('status', $request->status);
+
+        return $finances->paginate($number)
             ->appends($request->query());
     }
 }

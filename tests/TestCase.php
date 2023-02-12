@@ -3,14 +3,15 @@
 namespace Tests;
 
 use App\Models\User;
+use App\Models\Order;
 use App\Models\Coupon;
 use App\Models\Banking;
+use App\Models\Finance;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\ProductImage;
 use Laravel\Sanctum\Sanctum;
 use App\Models\MerchantAccount;
-use App\Models\Order;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -125,6 +126,16 @@ abstract class TestCase extends BaseTestCase
     public function createOrder(?array $data = []): Order
     {
         return Order::factory()->create($data);
+    }
+    /**
+     * Create a finance instance.
+     *
+     * @param  array $data
+     * @return Finance
+     */
+    public function createFinance(?array $data = []): Finance
+    {
+        return Finance::factory()->create($data);
     }
 
     public function deleteDirectory(string $directory, string $fileName, ?bool $delete = false): void

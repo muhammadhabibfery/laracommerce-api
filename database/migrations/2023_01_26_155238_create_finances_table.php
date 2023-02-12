@@ -16,8 +16,9 @@ return new class extends Migration
         Schema::create('finances', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->onDelete('cascade');
-            $table->string('description', 200);
             $table->enum('type', ['DEBIT', 'KREDIT'])->index();
+            $table->string('order_id', 31)->nullable();
+            $table->string('description', 200);
             $table->unsignedInteger('amount');
             $table->enum(
                 'status',
