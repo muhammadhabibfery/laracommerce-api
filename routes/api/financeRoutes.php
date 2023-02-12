@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\FinanceController;
+use App\Http\Controllers\API\WithDrawController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,4 +20,6 @@ Route::prefix('merchant')
     ->group(function () {
         Route::apiResource("finances", FinanceController::class)
             ->only('index');
+        Route::get("finances/withdraw", [WithDrawController::class, "create"])->name("finance.wd");
+        Route::post("finances/withdraw", [WithDrawController::class, "store"])->name("finance.wd");
     });

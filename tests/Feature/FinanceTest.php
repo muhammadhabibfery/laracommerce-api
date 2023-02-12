@@ -8,11 +8,16 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\MerchantAccount;
+use App\Notifications\WithDrawRequestNotification;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Testing\Fluent\AssertableJson;
+use Tests\Validations\FinanceValidation;
 
 class FinanceTest extends TestCase
 {
+    use FinanceValidation;
+
     public User $userAdmin;
     public User $userMerchant;
     public User $userCustomer;
@@ -101,5 +106,46 @@ class FinanceTest extends TestCase
             )
             ->assertJsonPath('data.0.balance', 'Rp. 300.000')
             ->assertJsonPath('data.1.balance', 'Rp. 240.000');
+    }
+
+    /** @test */
+    public function the_resource_for_create_withdraw_request_can_be_sent()
+    {
+        $res = $this->getJson(route('finance.wd'), $this->header);
+
+        $res->assertOk()
+            ->assertJson(
+                fn (AssertableJson $json) =>
+                $json->hasAll(['code', 'message', 'data'])
+            )
+            ->assertJsonPath('data.financeBalance', 'Rp. 300.000');
+    }
+
+    /** @test */
+    public function the_merchant_can_create_withdraw_request()
+    {
+        $res = $this->postJson(route('finance.wd'), ['name' => $this->merchantAccount->name, 'bankAccountName' => $this->merchantAccount->bank_account_name, 'bankAccountNumber' => "{$this->merchantAccount->bank_account_number}", 'amount' => 100000]);
+
+        $res->assertCreated()
+            ->assertJson(
+                fn (AssertableJson $json) =>
+                $json->hasAll(['code', 'message', 'data'])
+            )
+            ->assertJsonPath('data.amount', 'Rp. 100.000')
+            ->assertJsonPath('data.status', 'PENDING')
+            ->assertJsonPath('data.balance', 'Rp. 200.000');
+
+        $this->assertDatabaseCount('finances', 4);
+    }
+
+    /** @test */
+    public function the_withdraw_request_notification_can_be_sent_to_admin()
+    {
+        $wdData = ['name' => $this->merchantAccount->name, 'bankAccountName' => $this->merchantAccount->bank_account_name, 'bankAccountNumber' => "{$this->merchantAccount->bank_account_number}", 'amount' => 100000];
+
+        Notification::fake();
+        Notification::send($this->userAdmin, new WithDrawRequestNotification($wdData));
+
+        Notification::assertSentTo($this->userAdmin, WithDrawRequestNotification::class);
     }
 }

@@ -24,7 +24,7 @@ return new class extends Migration
                 'status',
                 ['PENDING', 'SUCCESS', 'FAILED', 'ACCEPT', 'REJECT']
             )->index();
-            $table->unsignedInteger('balance');
+            $table->unsignedBigInteger('balance');
             $table->timestamps();
         });
     }

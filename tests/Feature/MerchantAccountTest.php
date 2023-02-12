@@ -75,7 +75,7 @@ class MerchantAccountTest extends TestCase
         $res->assertOk()
             ->assertJson(
                 fn (AssertableJson $json) =>
-                $json->hasAll(['code', 'message', 'data', 'data.banking', 'data.user'])
+                $json->hasAll(['code', 'message', 'data', 'data.bankingName', 'data.user'])
             )->assertJsonPath('data.name', $merchantAccount->name);
 
         $this->assertDatabaseCount('merchant_accounts', 1)
