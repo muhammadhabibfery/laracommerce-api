@@ -17,6 +17,24 @@ class CategoryResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'slug' => $this->slug,
+            'products' => $this->whenLoaded('products', fn () => $this->getProductsRelation())
+        ];
+    }
+
+    /**
+     * Get the products relation and set into an array.
+     *
+     * @return array
+     */
+    private function getProductsRelation(): array
+    {
+        $products = ProductResource::collection($this->products()->paginate(6)->appends(request()->query()))
+            ->response()
+            ->getData(true);
+        return  [
+            'data' => $products['data'],
+            'pages' => ['links' => $products['links'], 'meta' => $products['meta']]
         ];
     }
 }

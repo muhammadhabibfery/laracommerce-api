@@ -39,4 +39,14 @@ class Category extends Model
         $this->attributes['name'] = str($value)->title();
         $this->attributes['slug'] = str($value)->slug();
     }
+
+    /**
+     * Get the route key for the model.
+     *
+     * @return string
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 }

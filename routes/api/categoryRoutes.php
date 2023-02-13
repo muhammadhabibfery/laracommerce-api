@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\CategoryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,7 +14,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth:sanctum', 'verified', 'authRole:CUSTOMER,MERCHANT,STAFF,ADMIN'])
-    ->group(function () {
-        //
-    });
+Route::get("categories", [CategoryController::class, "index"])->name("categories");
+Route::get("categories/{category}", [CategoryController::class, "show"])->name("categories.show");
