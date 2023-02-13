@@ -29,6 +29,7 @@ class MerchantAccountFactory extends Factory
             'bank_account_name' => fake()->unique()->name(),
             'bank_account_number' => rand(111111111111111, 999999999999999),
             'bank_branch_name' => fake()->city(),
+            'balance' => 0
         ];
     }
 }

@@ -11,6 +11,7 @@ use App\Http\Resources\MerchantAccountResource;
 use App\Models\User;
 use App\Notifications\WithDrawRequestNotification;
 use ErrorException;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Notification;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -47,9 +48,13 @@ class WithDrawController extends Controller
      */
     public function store(FinanceRequest $request): JsonResponse
     {
-        $user = $request->user()->finance();
+        $user = $request->user();
+        $validatedData = $this->mergeData($request->validatedWD());
 
-        if ($wd = $user->create($this->mergeData($request->validatedWD()))) {
+        if ($wd = $user->finances()->create($validatedData)) {
+            if (!$user->merchantAccount->update(Arr::only($validatedData, ['balance'])))
+                throw new ErrorException(self::FAILED, Response::HTTP_INTERNAL_SERVER_ERROR);
+
             Notification::send($this->getAdmin(), new WithDrawRequestNotification($wd));
 
             $wd = (new FinanceResource($wd))

@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\MerchantAccount;
 use App\Notifications\WithDrawRequestNotification;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\Validations\FinanceValidation;
@@ -51,14 +52,18 @@ class FinanceTest extends TestCase
                 $this->product2->id => ['quantity' => 1, 'total_price' => $this->product2->price],
             ]);
         $this->userMerchant
-            ->finance()
+            ->finances()
             ->create(['type' => 'DEBIT', 'order_id' => $this->order->invoice_number, 'description' => self::INCOMING_FUNDS, 'amount' => $this->order->total_price, 'status' => 'SUCCESS', 'balance' => $this->order->total_price]);
+        $this->merchantAccount->balance += $this->order->total_price;
+        $this->merchantAccount->save();
         $merchantTax = $this->order->total_price * 20 / 100;
         $this->userMerchant
-            ->finance()
-            ->create(['type' => 'KREDIT', 'order_id' => $this->order->invoice_number, 'description' => self::MERCHANT_TAX, 'amount' => $merchantTax, 'status' => 'SUCCESS', 'balance' => $this->userMerchant->finance()->latest()->first()->balance - $merchantTax]);
+            ->finances()
+            ->create(['type' => 'KREDIT', 'order_id' => $this->order->invoice_number, 'description' => self::MERCHANT_TAX, 'amount' => $merchantTax, 'status' => 'SUCCESS', 'balance' => $this->merchantAccount->balance - $merchantTax]);
+        $this->merchantAccount->balance -= $merchantTax;
+        $this->merchantAccount->save();
         $this->userAdmin
-            ->finance()
+            ->finances()
             ->create(['type' => 'DEBIT', 'order_id' => $this->order->invoice_number, 'description' => self::REVENUE_ADMIN, 'amount' => $merchantTax, 'status' => 'SUCCESS', 'balance' => $merchantTax]);
     }
 
@@ -73,10 +78,11 @@ class FinanceTest extends TestCase
                 $json->hasAll(['code', 'message', 'data', 'pages'])
                     ->count('data', 2)
             )
-            ->assertJsonPath('data.0.balance', 'Rp. 300.000')
-            ->assertJsonPath('data.1.balance', 'Rp. 240.000');
+            ->assertJsonPath('data.0.balance', currencyFormat($this->userMerchant->finances->first()->balance))
+            ->assertJsonPath('data.1.balance', currencyFormat($this->userMerchant->finances->last()->balance));
 
-        $this->assertDatabaseCount('finances', 3);
+        $this->assertDatabaseCount('finances', 3)
+            ->assertDatabaseHas('merchant_accounts', Arr::only($this->merchantAccount->toArray(), ['user_id', 'balance']));
     }
 
     /** @test */
@@ -90,7 +96,7 @@ class FinanceTest extends TestCase
                 $json->hasAll(['code', 'message', 'data', 'pages'])
                     ->count('data', 1)
             )
-            ->assertJsonPath('data.0.balance', 'Rp. 300.000');
+            ->assertJsonPath('data.0.balance', currencyFormat($this->userMerchant->finances->first()->balance));
     }
 
     /** @test */
@@ -104,8 +110,8 @@ class FinanceTest extends TestCase
                 $json->hasAll(['code', 'message', 'data', 'pages'])
                     ->count('data', 2)
             )
-            ->assertJsonPath('data.0.balance', 'Rp. 300.000')
-            ->assertJsonPath('data.1.balance', 'Rp. 240.000');
+            ->assertJsonPath('data.0.balance', currencyFormat($this->userMerchant->finances->first()->balance))
+            ->assertJsonPath('data.1.balance', currencyFormat($this->userMerchant->finances->last()->balance));
     }
 
     /** @test */
@@ -118,24 +124,27 @@ class FinanceTest extends TestCase
                 fn (AssertableJson $json) =>
                 $json->hasAll(['code', 'message', 'data'])
             )
-            ->assertJsonPath('data.financeBalance', 'Rp. 300.000');
+            ->assertJsonPath('data.balance', currencyFormat($this->merchantAccount->balance));
     }
 
     /** @test */
     public function the_merchant_can_create_withdraw_request()
     {
-        $res = $this->postJson(route('finance.wd'), ['name' => $this->merchantAccount->name, 'bankAccountName' => $this->merchantAccount->bank_account_name, 'bankAccountNumber' => "{$this->merchantAccount->bank_account_number}", 'amount' => 100000]);
+        $wdData = ['name' => $this->merchantAccount->name, 'bankAccountName' => $this->merchantAccount->bank_account_name, 'bankAccountNumber' => "{$this->merchantAccount->bank_account_number}", 'amount' => 100000];
+
+        $res = $this->postJson(route('finance.wd'), $wdData);
 
         $res->assertCreated()
             ->assertJson(
                 fn (AssertableJson $json) =>
                 $json->hasAll(['code', 'message', 'data'])
             )
-            ->assertJsonPath('data.amount', 'Rp. 100.000')
+            ->assertJsonPath('data.amount', currencyFormat($wdData['amount']))
             ->assertJsonPath('data.status', 'PENDING')
-            ->assertJsonPath('data.balance', 'Rp. 200.000');
+            ->assertJsonPath('data.balance', currencyFormat($this->userMerchant->merchantAccount->balance));
 
-        $this->assertDatabaseCount('finances', 4);
+        $this->assertDatabaseCount('finances', 4)
+            ->assertDatabaseHas('merchant_accounts', Arr::only($this->userMerchant->merchantAccount->toArray(), ['user_id', 'balance']));
     }
 
     /** @test */

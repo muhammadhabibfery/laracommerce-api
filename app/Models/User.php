@@ -58,13 +58,13 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     }
 
     /**
-     * Get the finance associate with the user
+     * The finances that belong to the user
      *
-     * @return HasOne
+     * @return HasMany
      */
-    public function finance(): HasOne
+    public function finances(): HasMany
     {
-        return $this->hasOne(Finance::class);
+        return $this->hasMany(Finance::class);
     }
 
     /**

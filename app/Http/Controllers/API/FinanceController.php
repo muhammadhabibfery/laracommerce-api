@@ -96,10 +96,17 @@ class FinanceController extends Controller
         return response()->json($result, $code);
     }
 
+    /**
+     * Query to get finances by search.
+     *
+     * @param  Request $request
+     * @param  int $number
+     * @return LengthAwarePaginator
+     */
     private function getFinancesBySearch(Request $request, int $number): LengthAwarePaginator
     {
         $finances = $request->user()
-            ->finance();
+            ->finances();
 
         if (isset($request->type)) $finances->where('type', $request->type);
 

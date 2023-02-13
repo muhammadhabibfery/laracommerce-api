@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('bank_account_number', 50)->nullable()->unique();
             $table->string('bank_branch_name', 50)->nullable();
             $table->string('image', 100)->nullable();
+            $table->unsignedBigInteger('balance')->default(0);
             $table->timestamps();
         });
     }

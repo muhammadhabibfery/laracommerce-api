@@ -46,11 +46,17 @@ class OrderTest extends TestCase
                 $this->product2->id => ['quantity' => 1, 'total_price' => $this->product2->price],
                 $this->product3->id => ['quantity' => 1, 'total_price' => $this->product3->price],
             ]);
+        $this->merchantAccount1->balance += $this->product1->price;
+        $this->merchantAccount1->save();
+        $this->merchantAccount2->balance += ($this->product2->price + $this->product3->price);
+        $this->merchantAccount2->save();
         $this->order2 = $this->createOrder(['user_id' => $this->userCustomer->id, 'invoice_number' => 'test-234', 'total_price' => 150000]);
         $this->order2->products()
             ->attach([
                 $this->product1->id => ['quantity' => 1, 'total_price' => $this->product1->price],
             ]);
+        $this->merchantAccount1->balance += $this->product1->price;
+        $this->merchantAccount1->save();
     }
 
     /** @test */

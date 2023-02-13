@@ -25,12 +25,9 @@ class MerchantAccountResource extends JsonResource
             'bankAccountNumber' => $this->bank_account_number,
             'bankBranchName' => $this->bank_branch_name,
             'image' => $this->getImage(),
-            'user' => $this->whenLoaded('user', fn () => new UserResource($this->user)),
             'bankingName' => $this->whenLoaded('banking', fn () => $this->banking->name),
-            'financeBalance' => $this->whenLoaded(
-                'banking',
-                fn () => currencyFormat($this->user->finance()->latest()->first()?->balance ?: 0)
-            )
+            'balance' => currencyFormat($this->balance ?: 0),
+            'user' => $this->whenLoaded('user', fn () => new UserResource($this->user))
         ];
     }
 }

@@ -30,10 +30,8 @@ class FinanceRequest extends FormRequest
         if ($this->routeIs('finance.wd') && $this->isMethod('POST')) {
             $this->financeBalance =
                 $this->user()
-                ->finance()
-                ->latest()
-                ->first();
-            $this->financeBalance = isset($this->financeBalance->balance) ? $this->financeBalance->balance : 0;
+                ->merchantAccount
+                ->balance;
 
             return [
                 'name' => ['required', 'string', Rule::exists('merchant_accounts', 'name')->where('id', $this->user()->merchantAccount->id)],
