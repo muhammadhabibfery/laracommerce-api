@@ -1,8 +1,6 @@
 <?php
 
 use App\Http\Controllers\API\MerchantAccountController;
-use App\Http\Controllers\API\ProductController;
-use App\Http\Controllers\API\ProductImageController;
 use Illuminate\Support\Facades\Route;
 
 /*

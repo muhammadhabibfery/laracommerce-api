@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use App\Http\Controllers\API\LandingPageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/dashboard', function () {
     return request()->user();
 });
+
+Route::get("/", [LandingPageController::class, "index"])->name("landing-page");
 
 $routes = glob(__DIR__ . "/api/*.php");
 foreach ($routes as $route) require($route);

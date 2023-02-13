@@ -1,7 +1,11 @@
 <?php
 
+use App\Models\Category;
+use App\Models\Product;
 use Carbon\Carbon;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * get a user where has admin or superadmin role
@@ -72,4 +76,29 @@ function currencyFormat(int $value): string
 function integerFormat(string $value): int
 {
     return (int) str_replace('.', '', $value);
+}
+
+/**
+ * Query to get random categories and limit by 6.
+ *
+ * @return Collection
+ */
+function getRandomCategories(): Collection
+{
+    return Category::inRandomOrder()
+        ->limit(6)
+        ->get();
+}
+
+/**
+ * Query to get top seller products.
+ *
+ * @return LengthAwarePaginator
+ */
+function getTopSellerProducts(): LengthAwarePaginator
+{
+    return Product::where('sold', '>', 3)
+        ->latest()
+        ->paginate(6)
+        ->appends(request()->query());
 }
