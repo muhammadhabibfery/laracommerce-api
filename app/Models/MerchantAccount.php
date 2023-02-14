@@ -90,4 +90,15 @@ class MerchantAccount extends Model
     {
         return $this->image ? asset('storage/merchant-images/' . $this->image) : asset('images/no-image.png');
     }
+
+    /**
+     * Get the route key for the model.
+     *
+     * @return string
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
 }

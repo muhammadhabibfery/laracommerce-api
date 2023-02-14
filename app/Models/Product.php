@@ -7,10 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Scout\Searchable;
+// use Laravel\Scout\Attributes\SearchUsingFullText;
+// use Laravel\Scout\Attributes\SearchUsingPrefix;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -18,6 +21,21 @@ class Product extends Model
      * @var array<int, string>
      */
     protected $guarded = [];
+
+    /**
+     * Get the indexable data array for the model.
+     *
+     * @return array
+     */
+    // #[SearchUsingPrefix(['name'])]
+    // #[SearchUsingFullText(['description'])]
+    public function toSearchableArray()
+    {
+        return [
+            'name' => $this->name,
+            'description' => $this->description,
+        ];
+    }
 
     /**
      * Get the product images for the product

@@ -25,7 +25,7 @@ class ProductResource extends JsonResource
             'sold' => $this->sold ?: 0,
             'quantity' => $this->whenPivotLoaded('order_product', fn () => $this->pivot->quantity),
             'totalPrice' => $this->whenPivotLoaded('order_product', fn () => currencyFormat($this->pivot->total_price)),
-            // 'merchant' => $this->merchant_account_id,
+            'merchant' => $this->whenLoaded('merchantAccount', fn () => new MerchantAccountResource($this->merchantAccount)),
             'category' => $this->whenLoaded('category', fn () => new CategoryResource($this->category)),
         ];
     }

@@ -15,3 +15,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get("merchant/detail/{merchantAccount}", [ProductCustomerController::class, "getMerchant"])->name("products.merchant");
+Route::get("product/search", [ProductCustomerController::class, "searchProducts"])->name("products.search");
+Route::get("product/{product}", [ProductCustomerController::class, "getProduct"])->name("products.detail");

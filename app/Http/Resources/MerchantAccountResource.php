@@ -31,7 +31,7 @@ class MerchantAccountResource extends JsonResource
             'user' => $this->whenLoaded('user', fn () => new UserResource($this->user))
         ];
 
-        if ($request->is('api/merchant/detail*'))
+        if ($request->is('api/merchant/detail*') || !$request->is('api/merchant*'))
             return $this->resourceToCustomer($request, $resource);
 
         return $resource;
