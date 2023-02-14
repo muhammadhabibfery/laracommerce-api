@@ -90,30 +90,4 @@ class MerchantAccount extends Model
     {
         return $this->image ? asset('storage/merchant-images/' . $this->image) : asset('images/no-image.png');
     }
-
-    /**
-     * Get the route key for the model.
-     *
-     * @return string
-     */
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
-    }
-
-    /**
-     * Retrieve the model for a bound value.
-     *
-     * @param  mixed  $value
-     * @param  string|null  $field
-     * @return \Illuminate\Database\Eloquent\Model|null
-     */
-    public function resolveRouteBinding($value, $field = null): Model|null
-    {
-        $result = $this->where($this->getRouteKeyName(), $value);
-
-        if (request()->is('api/merchant/*')) $result->where('user_id', request()->user()->id);
-
-        return $result->firstOrFail();
-    }
 }

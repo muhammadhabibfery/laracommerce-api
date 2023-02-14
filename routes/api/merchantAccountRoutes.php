@@ -15,9 +15,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('merchant')
-    ->middleware(['auth:sanctum', 'verified', 'authRole:MERCHANT'])
+    ->middleware(['auth:sanctum', 'verified'])
     ->group(function () {
-        Route::apiResource("accounts", MerchantAccountController::class)
-            ->parameters(['accounts' => 'merchantAccount'])
-            ->except(['index', 'destroy']);
+        Route::post("accounts", [MerchantAccountController::class, "store"])
+            ->name("accounts.store");
+        Route::get("accounts", [MerchantAccountController::class, "show"])
+            ->name("accounts.show")
+            ->middleware('authRole:MERCHANT');
+        Route::match(['put', 'patch'], "accounts", [MerchantAccountController::class, "update"])
+            ->name("accounts.update")
+            ->middleware('authRole:MERCHANT');
     });

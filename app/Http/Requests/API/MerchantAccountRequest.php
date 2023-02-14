@@ -50,10 +50,10 @@ class MerchantAccountRequest extends FormRequest
             return array_merge(
                 $rules,
                 [
-                    'user_id' => ['required', 'integer', 'exists:users,id', Rule::unique('merchant_accounts', 'user_id')->where(fn ($query) => $query->where('user_id', $this->user()->id))->ignore($this->merchantAccount->id)],
-                    'name' => ['required', 'string', 'max:100', Rule::unique('merchant_accounts', 'name')->ignore($this->merchantAccount->id)],
-                    'bank_account_name' => ['required', 'string', 'max:100', Rule::unique('merchant_accounts', 'bank_account_name')->ignore($this->merchantAccount->id)],
-                    'bank_account_number' => ['required', 'string', 'max:50', Rule::unique('merchant_accounts', 'bank_account_number')->ignore($this->merchantAccount->id)]
+                    'user_id' => ['required', 'integer', 'exists:users,id', Rule::unique('merchant_accounts', 'user_id')->where(fn ($query) => $query->where('user_id', $this->user()->id))->ignore($this->user()->merchantAccount->id)],
+                    'name' => ['required', 'string', 'max:100', Rule::unique('merchant_accounts', 'name')->ignore($this->user()->merchantAccount->id)],
+                    'bank_account_name' => ['required', 'string', 'max:100', Rule::unique('merchant_accounts', 'bank_account_name')->ignore($this->user()->merchantAccount->id)],
+                    'bank_account_number' => ['required', 'string', 'max:50', Rule::unique('merchant_accounts', 'bank_account_number')->ignore($this->user()->merchantAccount->id)]
                 ]
             );
     }
@@ -102,7 +102,7 @@ class MerchantAccountRequest extends FormRequest
         $request = $this->all();
         $oldImage = null;
 
-        if ($this->routeIs('accounts.update')) $oldImage = $this->merchantAccount->image;
+        if ($this->routeIs('accounts.update')) $oldImage = $this->user()->merchantAccount->image;
 
         return array_merge(
             $this->validated(),

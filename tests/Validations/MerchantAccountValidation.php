@@ -98,17 +98,4 @@ trait MerchantAccountValidation
         $res->assertBadRequest()
             ->assertJsonPath('message', 'You already have merchant account.');
     }
-
-    /** @test */
-    public function show_the_merchant_account_not_found()
-    {
-        $this->withExceptionHandling();
-        $this->postJson(route('accounts.store'), $this->setMerchantData(), $this->header)->json()['data'];
-        $this->authenticatedUser->update(['role' => 'MERCHANT']);
-
-        $res = $this->getJson(route('accounts.show', 'abcd'), $this->header);
-
-        $res->assertNotFound()
-            ->assertJsonPath('message', 'MerchantAccount. not found.');
-    }
 }

@@ -70,7 +70,7 @@ class MerchantAccountTest extends TestCase
         $merchantAccount = $this->createMerchantAccount($merchantData);
         $this->authenticatedUser->update(['role' => 'MERCHANT']);
 
-        $res = $this->getJson(route('accounts.show', $merchantAccount), $this->header);
+        $res = $this->getJson(route('accounts.show'), $this->header);
 
         $res->assertOk()
             ->assertJson(
@@ -85,6 +85,7 @@ class MerchantAccountTest extends TestCase
     /** @test */
     public function a_user_can_update_merchant_account()
     {
+        $this->withExceptionHandling();
         Storage::fake($this->directory);
         $file1 = UploadedFile::fake()->image('beatles.png');
         $file2 = UploadedFile::fake()->image('oasis.png');
@@ -96,7 +97,7 @@ class MerchantAccountTest extends TestCase
         );
         $this->authenticatedUser->update(['role' => 'MERCHANT']);
 
-        $res = $this->putJson(route('accounts.update', $dataUpdate['slug']), $dataUpdate, $this->header);
+        $res = $this->putJson(route('accounts.update'), $dataUpdate, $this->header);
 
         $res->assertOk()
             ->assertJson(

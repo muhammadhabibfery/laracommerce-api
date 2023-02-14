@@ -18,8 +18,6 @@ class AuthenticatedRole
      */
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        if ($request->routeIs('accounts.store')) return $next($request);
-
         if (checkRole($roles, $request->user()->role)) return $next($request);
 
         throw new AccessDeniedHttpException("You don't have permission to access this page");

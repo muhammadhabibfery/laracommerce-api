@@ -59,9 +59,9 @@ class MerchantAccountController extends Controller
      * @param  MerchantAccount  $merchantAccount
      * @return JsonResponse
      */
-    public function show(MerchantAccount $merchantAccount): JsonResponse
+    public function show(): JsonResponse
     {
-        $merchantAccount = (new MerchantAccountResource($merchantAccount->load(['banking', 'user'])))
+        $merchantAccount = (new MerchantAccountResource($this->getMerchantAccount()->load(['banking', 'user'])))
             ->response()
             ->getData(true);
 
@@ -75,8 +75,10 @@ class MerchantAccountController extends Controller
      * @param  MerchantAccount  $merchantAccount
      * @return JsonResponse
      */
-    public function update(MerchantAccountRequest $request, MerchantAccount $merchantAccount): JsonResponse
+    public function update(MerchantAccountRequest $request): JsonResponse
     {
+        $merchantAccount = $this->getMerchantAccount();
+
         if ($merchantAccount->update($request->validatedMerchantAccount())) {
             $this->createImage($request, $merchantAccount->image, self::$directory);
 
@@ -113,5 +115,15 @@ class MerchantAccountController extends Controller
         }
 
         return response()->json($result, $code);
+    }
+
+    /**
+     * Get merchant account.
+     *
+     * @return MerchantAccount
+     */
+    private function getMerchantAccount(): MerchantAccount
+    {
+        return MerchantAccount::where('user_id', request()->user()->id)->firstOrFail();
     }
 }
