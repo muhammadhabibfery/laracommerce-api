@@ -5,6 +5,7 @@ use App\Models\Product;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
@@ -75,7 +76,7 @@ function currencyFormat(int $value): string
  */
 function integerFormat(string $value): int
 {
-    return (int) str_replace('.', '', $value);
+    return (int) preg_replace('/[^0-9]/', '', $value);
 }
 
 /**
@@ -101,4 +102,22 @@ function getTopSellerProducts(): LengthAwarePaginator
         ->latest()
         ->paginate(6)
         ->appends(request()->query());
+}
+
+/**
+ * Get each product field for checkout validation.
+ *
+ * @param  string $attribute
+ * @param  Request $request
+ * @param  string $field
+ * @return int|string
+ */
+function getEachProductField(string $attribute, Request $request, string $field): int|string
+{
+    $result = explode('.', $attribute);
+    $firstIndex = count($result) - 4;
+    $secondIndex = count($result) - 2;
+    $result = [$result[$firstIndex], $result[$secondIndex]];
+
+    return $request->data[head($result)]['cart'][last($result)][$field];
 }

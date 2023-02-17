@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use ErrorException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\QueryException;
 use Illuminate\Auth\AuthenticationException;
@@ -98,6 +99,13 @@ class Handler extends ExceptionHandler
                 } elseif ($exception instanceof HttpException) {
                     $statusCode = $exception->getStatusCode() ?: 400;
                     $message = $exception->getMessage() ?: 'Invalid request';
+                    return response()->json([
+                        'code' => $statusCode,
+                        'message' => $message
+                    ], $statusCode);
+                } elseif ($exception instanceof ErrorException) {
+                    $statusCode = $exception->getCode() ?: 500;
+                    $message = $exception->getMessage() ?: 'Failed to get service';
                     return response()->json([
                         'code' => $statusCode,
                         'message' => $message

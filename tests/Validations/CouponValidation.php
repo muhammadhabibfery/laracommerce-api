@@ -95,4 +95,21 @@ trait CouponValidation
         $res->assertNotFound()
             ->assertJsonPath('message', 'Coupon not found.');
     }
+
+    /** @test */
+    public function the_merchant_balance_should_be_enough_to_create_the_coupon()
+    {
+        $this->withExceptionHandling();
+        $this->createCoupon(['name' => 'Coupon 1', 'merchant_account_id' => $this->merchant->id])->toArray();
+        $coupon = [
+            'name' => 'Coupon 2',
+            'discount_amount' => 50000,
+            'expired' => Carbon::parse(now()->addDays(5))->format(config('app.date_format'))
+        ];
+
+        $res = $this->postJson(route('coupons.store'), $coupon, $this->header);
+
+        $res->assertUnprocessable()
+            ->assertJsonPath('errors.discount_amount.0', 'Your balance is not enough to create the coupon');
+    }
 }

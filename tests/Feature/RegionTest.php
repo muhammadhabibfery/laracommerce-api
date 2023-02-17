@@ -24,7 +24,7 @@ class RegionTest extends TestCase
     /** @test */
     public function show_all_provinces()
     {
-        $res = $this->getJson(route('test-provinces'), [], $this->header);
+        $res = $this->getJson(route('region.provinces'), [], $this->header);
 
         $res->assertOk()
             ->assertJson(
@@ -37,7 +37,7 @@ class RegionTest extends TestCase
     /** @test */
     public function show_the_cities_by_province_id()
     {
-        $res = $this->getJson(route('test-cities', $this->province->id), [], $this->header);
+        $res = $this->getJson(route('region.cities', $this->province->id), [], $this->header);
 
         $res->assertOk()
             ->assertJson(
@@ -50,7 +50,7 @@ class RegionTest extends TestCase
     /** @test */
     public function show_all_couriers()
     {
-        $res = $this->getJson(route('test-couriers'), [], $this->header);
+        $res = $this->getJson(route('region.couriers'), [], $this->header);
 
         $res->assertOk()
             ->assertJson(

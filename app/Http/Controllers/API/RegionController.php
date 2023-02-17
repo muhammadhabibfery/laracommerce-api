@@ -15,9 +15,9 @@ class RegionController extends Controller
 {
     public array $couriers =
     [
-        ['id' => 1, 'name' => 'jne'],
-        ['id' => 2, 'name' => 'tiki'],
-        ['id' => 3, 'name' => 'pos']
+        ['id' => 'jne', 'name' => 'JNE'],
+        ['id' => 'tiki', 'name' => 'TIKI'],
+        ['id' => 'pos', 'name' => 'POS']
     ];
 
     /**

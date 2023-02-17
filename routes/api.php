@@ -23,9 +23,5 @@ Route::get('/dashboard', function () {
 
 Route::get("/", [LandingPageController::class, "index"])->name("landing-page");
 
-Route::get("test-provinces", [RegionController::class, "getAllProvinces"])->name("test-provinces");
-Route::get("test-cities/{id?}", [RegionController::class, "getTheCitiesByProvinceId"])->name("test-cities");
-Route::get("test-couriers", [RegionController::class, "getAllCouriers"])->name("test-couriers");
-
 $routes = glob(__DIR__ . "/api/*.php");
 foreach ($routes as $route) require($route);

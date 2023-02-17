@@ -24,7 +24,7 @@ class CouponTest extends TestCase
         $this->withoutExceptionHandling();
         $this->user = $this->authenticatedUser(['role' => 'MERCHANT']);
         $this->createBanking();
-        $this->merchant = $this->createMerchantAccount(['user_id' => $this->user->id]);
+        $this->merchant = $this->createMerchantAccount(['user_id' => $this->user->id, 'balance' => 2000]);
     }
 
     /** @test */
@@ -44,7 +44,7 @@ class CouponTest extends TestCase
                 $json->hasAll(['code', 'message', 'data'])
             );
 
-        $this->assertDatabaseHas('coupons', $coupon);
+        $this->assertDatabaseHas('coupons', Arr::except($coupon, ['expired']));
     }
 
     /** @test */
@@ -64,8 +64,8 @@ class CouponTest extends TestCase
             ->assertJsonPath('data.1.name', $coupon2->name);
 
         $this->assertDatabaseCount('coupons', 2)
-            ->assertDatabaseHas('coupons', Arr::except($coupon1->toArray(), ['created_at', 'updated_at']))
-            ->assertDatabaseHas('coupons', Arr::except($coupon2->toArray(), ['created_at', 'updated_at']));
+            ->assertDatabaseHas('coupons', Arr::except($coupon1->toArray(), ['created_at', 'updated_at', 'expired']))
+            ->assertDatabaseHas('coupons', Arr::except($coupon2->toArray(), ['created_at', 'updated_at', 'expired']));
     }
 
     /** @test */
@@ -84,7 +84,7 @@ class CouponTest extends TestCase
             )->assertJsonPath('data.0.name', $coupon2->name);
 
         $this->assertDatabaseCount('coupons', 2)
-            ->assertDatabaseHas('coupons', Arr::except($coupon2->toArray(), ['created_at', 'updated_at']));
+            ->assertDatabaseHas('coupons', Arr::except($coupon2->toArray(), ['created_at', 'updated_at', 'expired']));
     }
 
     /** @test */

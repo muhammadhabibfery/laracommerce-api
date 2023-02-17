@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->onDelete('cascade');
             $table->string('invoice_number', 31)->unique()->index();
             $table->unsignedInteger('total_price');
+            $table->string('coupons', 50)->nullable();
             $table->enum(
                 'status',
                 ['IN_CART', 'PENDING', 'SUCCESS', 'FAILED']
