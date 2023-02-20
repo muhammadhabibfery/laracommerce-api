@@ -51,13 +51,16 @@ class CheckoutController extends Controller
         return $this->wrapResponse(Response::HTTP_OK, 'The costs of courier services has been added', $result);
     }
 
-    public function couponValidate(CheckoutRequest $request): mixed
+    /**
+     * Validate the coupon code.
+     *
+     * @param  CheckoutRequest $request
+     * @return JsonResponse
+     */
+    public function couponValidate(CheckoutRequest $request): JsonResponse
     {
         $coupon = $request->getCouponByName($request->validated('coupon'));
-        $coupon = [
-            'value' => $coupon->discount_amount,
-            'discounAmount' => currencyFormat($coupon->discount_amount)
-        ];
+        $coupon = ['value' => $coupon->discount_amount, 'discounAmount' => currencyFormat($coupon->discount_amount)];
 
         return $this->wrapResponse(Response::HTTP_OK, "The coupon has been added", $coupon);
     }
@@ -66,9 +69,9 @@ class CheckoutController extends Controller
      * Submit the checkout cart, and store to database.
      *
      * @param  CheckoutRequest $request
-     * @return mixed
+     * @return JsonResponse
      */
-    public function submit(CheckoutRequest $request): mixed
+    public function submit(CheckoutRequest $request): JsonResponse
     {
         $data = $request->validated('data');
         $courierServicesCosts = $this->getCourierCosts($data, $request->user()->city_id);
@@ -104,9 +107,8 @@ class CheckoutController extends Controller
                 'courier' => $d['courier']
             ];
 
-            foreach ($d['cart'] as $cart_key => $cart) {
+            foreach ($d['cart'] as $cart_key => $cart)
                 $data[$data_key]['cart'][$cart_key]['price'] = currencyFormat($cart['price']);
-            }
 
             $data[$data_key]['courierServices'] = $this->fetchRajaOngkir($params);
 
@@ -128,9 +130,8 @@ class CheckoutController extends Controller
             $result = RajaOngkir::ongkosKirim($data)
                 ->get();
             foreach ($result[0]['costs'] as $costs_key => $costs) {
-                foreach ($costs['cost'] as $cost_key => $cost) {
+                foreach ($costs['cost'] as $cost_key => $cost)
                     $result[0]['costs'][$costs_key]['cost'][$cost_key]['value'] = currencyFormat($cost['value']);
-                }
             }
 
             return $result[0]['costs'];
@@ -144,20 +145,24 @@ class CheckoutController extends Controller
      *
      * @param  array $data
      * @param  array $courierServicesCosts
-     * @return int
+     * @return array
      */
-    private function getTotalCosts(array $data, array $courierServicesCosts): int
+    private function getTotalCosts(array $data, array $courierServicesCosts): array
     {
         $errorMessage = "Cost of courier service not available";
         $totalCosts = 0;
+        $courierServices = [];
 
         foreach ($data as $data_key => $d) {
             foreach ($courierServicesCosts[$data_key]['courierServices'] as $cs) {
                 if ($d['courierService'] === $cs['service']) {
                     if (isset($cs['cost'][0]['value'])) {
                         $cost = integerFormat($cs['cost'][0]['value']);
+                        $etd = $cs['cost'][0]['etd'] . ' Hari';
                         if ($cost < 1) throw new ErrorException($errorMessage, Response::HTTP_INTERNAL_SERVER_ERROR);
                         $totalCosts += $cost;
+                        $courierServiceAsString = $d['courier'] . ',' . $d['courierService']  . '(' . $cs['description'] . ')' . ',' . $etd . ',' . $cs['cost'][0]['value'];
+                        $courierServices[] = $courierServiceAsString;
                         break;
                     } else {
                         throw new ErrorException($errorMessage, Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -166,7 +171,7 @@ class CheckoutController extends Controller
             }
         }
 
-        return $totalCosts;
+        return [$totalCosts, $courierServices];
     }
 
     /**
@@ -174,12 +179,14 @@ class CheckoutController extends Controller
      *
      * @param  array $data
      * @param  int $userId
-     * @param  int $totalCost
+     * @param  array $totalCost
      * @return Order
      */
-    private function storeCart(array $data, int $userId, int $totalCost)
+    private function storeCart(array $data, int $userId, array $totalCost): Order
     {
-        $totalPrice = $totalCost;
+        $totalPrice = head($totalCost);
+        $courierServices = last($totalCost);
+        array_push($courierServices, currencyFormat($totalPrice));
 
         foreach ($data as $d) {
             if (isset($d['coupon'])) $coupon[] = $d['coupon'];
@@ -198,6 +205,7 @@ class CheckoutController extends Controller
             'invoice_number' => 'LARACOMMERCE-' . date('dmy') . Str::random(12),
             'total_price' => $totalPrice,
             'coupons' => json_encode($coupon),
+            'courier_services' => json_encode($courierServices),
             'status' => 'IN_CART'
         ])) throw new ErrorException('Failed to create new order', Response::HTTP_INTERNAL_SERVER_ERROR);
 

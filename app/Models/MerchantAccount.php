@@ -100,5 +100,4 @@ class MerchantAccount extends Model
     {
         return 'slug';
     }
-
 }

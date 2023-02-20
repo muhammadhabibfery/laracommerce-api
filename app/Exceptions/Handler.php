@@ -106,9 +106,13 @@ class Handler extends ExceptionHandler
                 } elseif ($exception instanceof ErrorException) {
                     $statusCode = $exception->getCode() ?: 500;
                     $message = $exception->getMessage() ?: 'Failed to get service';
+                    $file = $exception->getFile() ?: '';
+                    $line = $exception->getLine() ?: '';
                     return response()->json([
                         'code' => $statusCode,
-                        'message' => $message
+                        'message' => $message,
+                        'file' => $file,
+                        'line' => $line
                     ], $statusCode);
                 }
                 // elseif ($exception instanceof \Exception) {

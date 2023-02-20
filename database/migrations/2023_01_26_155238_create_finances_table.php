@@ -22,7 +22,7 @@ return new class extends Migration
             $table->unsignedInteger('amount');
             $table->enum(
                 'status',
-                ['PENDING', 'SUCCESS', 'FAILED', 'ACCEPT', 'REJECT']
+                ['PENDING', 'SUCCESS', 'ACCEPT', 'REJECT']
             )->index();
             $table->unsignedBigInteger('balance');
             $table->timestamps();

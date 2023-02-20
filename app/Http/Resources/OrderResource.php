@@ -14,8 +14,10 @@ class OrderResource extends JsonResource
      */
     public function toArray($request)
     {
-        if ($request->is('api/merchant/*'))
-            return $this->resourceToMerchant($request);
+        if ($request->is('api/order/history'))
+            return $this->resourceToCustomer();
+
+        return $this->resourceToMerchant($request);
     }
 
     /**
@@ -38,6 +40,20 @@ class OrderResource extends JsonResource
             'status' => $this->status,
             'products' => $this->whenLoaded('products', fn () => ProductResource::collection($this->products)),
             'user' => $this->whenLoaded('user', fn () => new UserResource($this->user))
+        ];
+    }
+
+    /**
+     * Order resource to customer.
+     *
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     */
+    private function resourceToCustomer()
+    {
+        return [
+            "invoiceNumber" => $this->invoice_number,
+            "totalPrice" => $this->total_price,
+            "status" => $this->status
         ];
     }
 }

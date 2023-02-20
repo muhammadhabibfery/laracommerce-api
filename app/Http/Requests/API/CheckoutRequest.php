@@ -10,9 +10,6 @@ use Illuminate\Validation\Rule;
 
 class CheckoutRequest extends FormRequest
 {
-
-    public int $productId;
-
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -103,7 +100,7 @@ class CheckoutRequest extends FormRequest
      * Get the coupon by name.
      *
      * @param  string|null $name
-     * @return Coupon
+     * @return Coupon|null
      */
     public function getCouponByName(?string $name): Coupon|null
     {

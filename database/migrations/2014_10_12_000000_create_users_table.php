@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('phone', 13)->unique();
             $table->string('nik', 16)->nullable()->unique();
             $table->string('role', 15);
+            $table->unsignedBigInteger('balance')->nullable();
             $table->enum('status', ['ACTIVE', 'INACTIVE']);
             $table->text('address')->nullable();
             $table->string('avatar', 120)->nullable();

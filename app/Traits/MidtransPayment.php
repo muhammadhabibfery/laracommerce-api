@@ -2,11 +2,13 @@
 
 namespace App\Traits;
 
+use App\Events\HasNewOrder;
 use Midtrans\Snap;
 use ErrorException;
 use Midtrans\Config;
 use App\Models\Order;
 use Illuminate\Http\JsonResponse;
+use Midtrans\Notification;
 use Symfony\Component\HttpFoundation\Response;
 
 trait MidtransPayment
@@ -55,41 +57,36 @@ trait MidtransPayment
      */
     private function createPaymentLink(Order $order): string
     {
-        $this->configuration();
-
         try {
+            $this->configuration();
             return Snap::createTransaction($this->setData($order))->redirect_url;
         } catch (\Exception $e) {
-            throw new ErrorException('Failed to create payment link', Response::HTTP_INTERNAL_SERVER_ERROR);
+            throw new ErrorException($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
-
-
     /**
-     * Update the product stock.
+     * Handle notification data from midtrans.
      *
-     * @param  string $invoiceNumber
-     * @param  bool $append
-     * @return Order|null
+     * @return JsonResponse
      */
-    private function updateProductStock(string $invoiceNumber, ?bool $append = true): Order|null
+    public function notificationHandler(): JsonResponse
     {
-        $order = $this->getOrderByInvoiceNumber($invoiceNumber);
+        try {
+            $this->configuration();
+            $notification = new Notification();
 
-        foreach ($order->products as $product) {
-            if ($append) {
-                $product->stock += $product->pivot->quantity;
-                $product->sold += $product->pivot->quantity;
-            } else {
-                $product->stock -= $product->pivot->quantity;
-                if ($product->sold > 0) $product->sold -= $product->pivot->quantity;
-            }
+            if (in_array($notification->transaction_status, ['deny', 'expire', 'cancel'])) $status = 'FAILED';
+            if ($notification->transaction_status === 'pending') $status = 'PENDING';
+            if ($notification->transaction_status === 'settlement') $status = 'SUCCESS';
 
-            if (!$product->save()) throw new ErrorException('Failed to update the product stock', Response::HTTP_INTERNAL_SERVER_ERROR);
+            event(new HasNewOrder($this->getOrderByInvoiceNumber($notification->order_id), $status));
+
+            $orderStatusMessage = "The order with invoice number {$notification->order_id} is $status";
+            return $this->wrapResponse(Response::HTTP_OK, strtolower($orderStatusMessage));
+        } catch (\Exception $e) {
+            throw new ErrorException($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        return $append ? null : $order;
     }
 
     /**
@@ -114,18 +111,10 @@ trait MidtransPayment
      */
     private function wrapResponse(int $code, string $message, ?array $resource = []): JsonResponse
     {
-        $result = [
-            'code' => $code,
-            'message' => $message,
-            'data' => $resource
-        ];
+        $result = ['code' => $code, 'message' => $message];
 
-        // if (count($resource)) {
-        //     $result = array_merge($result, ['data' => $resource['data']]);
-
-        //     if (count($resource) > 1)
-        //         $result = array_merge($result, ['pages' => ['links' => $resource['links'], 'meta' => $resource['meta']]]);
-        // }
+        if (count($resource))
+            $result = array_merge($result, ['data' => $resource]);
 
         return response()->json($result, $code);
     }

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('invoice_number', 31)->unique()->index();
             $table->unsignedInteger('total_price');
             $table->string('coupons', 50)->nullable();
+            $table->string('courier_services', 200);
             $table->enum(
                 'status',
                 ['IN_CART', 'PENDING', 'SUCCESS', 'FAILED']
