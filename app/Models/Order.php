@@ -73,6 +73,8 @@ class Order extends Model
 
         if (request()->is('api/merchant/*')) $result->whereHas('products', fn ($query) => $query->where('merchant_account_id', request()->user()->merchantAccount->id));
 
+        if (request()->is('api/orders*')) $result->where('user_id', request()->user()->id);
+
         return $result->firstOrFail();
     }
 }

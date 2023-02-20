@@ -159,14 +159,16 @@ class CheckoutController extends Controller
                     if (isset($cs['cost'][0]['value'])) {
                         $cost = integerFormat($cs['cost'][0]['value']);
                         $etd = $cs['cost'][0]['etd'] . ' Hari';
-                        if ($cost < 1) throw new ErrorException($errorMessage, Response::HTTP_INTERNAL_SERVER_ERROR);
+                        if ($cost < 1) throw new ErrorException($errorMessage, Response::HTTP_NOT_FOUND);
                         $totalCosts += $cost;
                         $courierServiceAsString = $d['courier'] . ',' . $d['courierService']  . '(' . $cs['description'] . ')' . ',' . $etd . ',' . $cs['cost'][0]['value'];
                         $courierServices[] = $courierServiceAsString;
                         break;
                     } else {
-                        throw new ErrorException($errorMessage, Response::HTTP_INTERNAL_SERVER_ERROR);
+                        throw new ErrorException($errorMessage, Response::HTTP_NOT_FOUND);
                     }
+                } else {
+                    throw new ErrorException($errorMessage, Response::HTTP_NOT_FOUND);
                 }
             }
         }

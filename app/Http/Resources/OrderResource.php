@@ -14,7 +14,7 @@ class OrderResource extends JsonResource
      */
     public function toArray($request)
     {
-        if ($request->is('api/order/history'))
+        if ($request->is('api/orders*'))
             return $this->resourceToCustomer();
 
         return $this->resourceToMerchant($request);
@@ -52,8 +52,17 @@ class OrderResource extends JsonResource
     {
         return [
             "invoiceNumber" => $this->invoice_number,
-            "totalPrice" => $this->total_price,
-            "status" => $this->status
+            "totalPrice" => currencyFormat($this->total_price),
+            "coupons" => $this->when(isset($this->coupons), json_decode($this->coupons)),
+            "courierServices" => $this->when(isset($this->courier_services), function () {
+                $cs = json_decode($this->courier_services);
+                array_pop($cs);
+                return collect($cs)->map(function ($item, $key) {
+                    return str_replace(',', ' ', $item);
+                })->all();
+            }),
+            "status" => $this->status,
+            "products" => $this->whenLoaded('products', fn () => ProductResource::collection($this->products))
         ];
     }
 }

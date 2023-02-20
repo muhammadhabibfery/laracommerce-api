@@ -2,36 +2,24 @@
 
 namespace App\Http\Controllers\API;
 
-use Closure;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OrderResource;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Pagination\LengthAwarePaginator;
 
-class OrderController extends Controller
+class OrderCustomerController extends Controller
 {
-    private int $merchantId;
-
-    public function __construct()
-    {
-        $this->middleware(function (Request $request, Closure $next) {
-            $this->merchantId = $request->user()->merchantAccount->id;
-            return $next($request);
-        });
-    }
-
     /**
      * Display a listing of the resource.
      *
-     * @param Request
      * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
     {
-        $orders = OrderResource::collection($this->getOrdersByMerchantId($request, 6))
+        $orders = OrderResource::collection($this->getOrdersByUserId($request, 6))
             ->response()
             ->getData(true);
 
@@ -46,12 +34,7 @@ class OrderController extends Controller
      */
     public function show(Order $order): JsonResponse
     {
-        $order = $order->load([
-            'products' => fn ($query) => $query->where('merchant_account_id', $this->merchantId)->paginate(6),
-            'totalPriceProductsMerchant' => fn ($query) => $query->where('merchant_account_id', $this->merchantId)
-        ]);
-
-        $order = (new OrderResource($order))
+        $order = (new OrderResource($order->load('products')))
             ->response()
             ->getData(true);
 
@@ -84,18 +67,16 @@ class OrderController extends Controller
     }
 
     /**
-     * Get orders by merchant id
+     * Get orders by user id.
      *
      * @param  Request $request
      * @param  int $number
      * @return LengthAwarePaginator
      */
-    private function getOrdersByMerchantId(Request $request, int $number): LengthAwarePaginator
+    private function getOrdersByUserId(Request $request, int $number): LengthAwarePaginator
     {
-        return Order::withWhereHas(
-            'totalPriceProductsMerchant',
-            fn ($query) => $query->where('merchant_account_id', request()->user()->merchantAccount->id)
-        )->paginate($number)
+        return Order::where('user_id', request()->user()->id)
+            ->paginate($number)
             ->appends($request->query());
     }
 }

@@ -32,7 +32,7 @@ class CheckoutRequest extends FormRequest
             return [
                 'name' => ['required', 'string', 'min:3', 'max:100'],
                 'address' => ['required', 'string'],
-                'phone' => ['required', 'digits_between:11,13'],
+                'phone' => ['required', 'digits_between:11,13', Rule::unique('users', 'phone')->ignore($this->user())],
                 'city_id' => ['required', 'exists:cities,id']
             ];
 

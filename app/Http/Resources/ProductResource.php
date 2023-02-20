@@ -14,6 +14,15 @@ class ProductResource extends JsonResource
      */
     public function toArray($request)
     {
+        if ($request->is('api/orders*'))
+            return [
+                'name' => $this->name,
+                'description' => $this->description,
+                'price' => currencyFormat($this->price),
+                'weight' => $this->weight,
+                'quantity' => $this->pivot->quantity,
+            ];
+
         return [
             'id' => $this->id,
             'name' => $this->name,
