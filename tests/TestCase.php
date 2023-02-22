@@ -12,6 +12,7 @@ use App\Models\Category;
 use App\Models\ProductImage;
 use Laravel\Sanctum\Sanctum;
 use App\Models\MerchantAccount;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -44,10 +45,10 @@ abstract class TestCase extends BaseTestCase
      * @param  array $data
      * @return User
      */
-    public function authenticatedUser(?array $data = []): User
+    public function authenticatedUser(?array $data = [], ?bool $api = true): User
     {
         $user = $this->createUser($data);
-        Sanctum::actingAs($user, ['*']);
+        $api ? Sanctum::actingAs($user, ['*']) : $this->actingAs($user);
         return $user;
     }
 
@@ -99,11 +100,13 @@ abstract class TestCase extends BaseTestCase
      * Create a category instance.
      *
      * @param  array $data
-     * @return Category
+     * @return Category|Collection
      */
-    public function createCategory(?array $data = []): Category
+    public function createCategory(?array $data = [], ?int $count = 1): Category|Collection
     {
-        return Category::factory()->create($data);
+        $categories = Category::factory()->count($count)->create($data);
+
+        return $count < 2 ? $categories->first() : $categories;
     }
 
     /**

@@ -8,15 +8,16 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\VerifyEmails;
 use App\Notifications\ResetPasswords;
 use Illuminate\Notifications\Notifiable;
+use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
+class User extends Authenticatable implements MustVerifyEmail, CanResetPassword, FilamentUser
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -150,5 +151,15 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new ResetPasswords($token));
+    }
+
+    /**
+     * User who has access to the admin panel
+     *
+     * @return bool
+     */
+    public function canAccessFilament(): bool
+    {
+        return checkRole(['ADMIN', 'STAFF'], auth()->user()->role);
     }
 }
