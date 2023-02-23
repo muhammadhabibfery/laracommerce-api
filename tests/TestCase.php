@@ -113,11 +113,13 @@ abstract class TestCase extends BaseTestCase
      * Create a banking instance.
      *
      * @param  array $data
-     * @return Banking
+     * @return Banking|Collection
      */
-    public function createBanking(?array $data = []): Banking
+    public function createBanking(?array $data = [], ?int $count = 1): Banking|Collection
     {
-        return Banking::factory()->create($data);
+        $bankings = Banking::factory()->count($count)->create($data);
+
+        return $count < 2 ? $bankings->first() : $bankings;
     }
 
     /**

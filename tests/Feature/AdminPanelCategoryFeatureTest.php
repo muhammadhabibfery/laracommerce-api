@@ -3,23 +3,22 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use App\Models\User;
 use Livewire\Livewire;
 use App\Filament\Resources\CategoryResource\Pages\ManageCategories;
 use App\Models\Category;
 use Filament\Pages\Actions\CreateAction;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 
 class AdminPanelCategoryFeatureTest extends TestCase
 {
-    private User $userAdmin;
-    private $category;
+    private Collection $category;
 
     public function setUp(): void
     {
         parent::setUp();
         $this->withoutExceptionHandling();
-        $userAdmin = $this->authenticatedUser(['role' => 'ADMIN'], false);
+        $this->authenticatedUser(['role' => 'ADMIN'], false);
         $this->category = $this->createCategory(count: 3);
     }
 

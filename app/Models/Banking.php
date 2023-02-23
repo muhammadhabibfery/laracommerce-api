@@ -41,6 +41,6 @@ class Banking extends Model
      */
     public function setAliasAttribute($value)
     {
-        $this->attributes['alias'] = strlen($value) > 3 ? str($value)->ucfirst() : str($value)->upper();
+        $this->attributes['alias'] = strlen($value) > 3 ? str($value)->lower()->ucfirst() : str($value)->upper();
     }
 }

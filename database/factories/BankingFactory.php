@@ -18,7 +18,7 @@ class BankingFactory extends Factory
     {
         return [
             'name' => fake()->words(3, true),
-            'alias' => strtolower(fake()->word()),
+            'alias' => strtolower(fake()->slug()),
             'created_by' => fake()->randomElement([1, 2])
         ];
     }
