@@ -160,6 +160,6 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
      */
     public function canAccessFilament(): bool
     {
-        return checkRole(['ADMIN', 'STAFF'], auth()->user()->role);
+        return checkRole(['ADMIN', 'STAFF'], auth()->user()->role) && auth()->user()->status === 'ACTIVE';
     }
 }

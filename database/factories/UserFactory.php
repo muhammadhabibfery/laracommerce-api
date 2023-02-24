@@ -20,7 +20,6 @@ class UserFactory extends Factory
     public function definition()
     {
         $name = fake()->name();
-        dump(strlen('superadmin'));
 
         return [
             'city_id' => City::inRandomOrder()->first(),
@@ -29,8 +28,8 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'phone' => '08' . rand(11111111111, 99999999999),
             'nik' => fake()->nik(),
-            'role' => fake()->randomElement(['SUPERADMIN', 'ADMIN', 'MERCHANT', 'CUSTOMER']),
-            'status' => fake()->randomElement(['ACTIVE', 'INACTIVE']),
+            'role' => fake()->randomElement(['ADMIN', 'STAFF', 'MERCHANT', 'CUSTOMER']),
+            'status' => 'ACTIVE',
             'address' => fake()->address(),
             'email_verified_at' => now(),
             'password' => Hash::make('password@123'), // password

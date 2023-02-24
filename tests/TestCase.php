@@ -32,11 +32,13 @@ abstract class TestCase extends BaseTestCase
      * Create a user instance.
      *
      * @param  array $data
-     * @return User
+     * @return User|Collection
      */
-    public function createUser(?array $data = []): User
+    public function createUser(?array $data = [], ?int $count = 1): User|Collection
     {
-        return User::factory()->create($data);
+        $users = User::factory()->count($count)->create($data);
+
+        return $count < 2 ? $users->first() : $users;
     }
 
     /**

@@ -100,7 +100,7 @@ class AdminPanelBankingFeatureTest extends TestCase
         $banking = $this->bankings->last();
 
         Livewire::test(EditBanking::class, [
-            'record' => $banking->getKey()
+            'record' => $banking->alias
         ])
             ->assertFormSet([
                 'name' => $banking->name,
@@ -116,7 +116,7 @@ class AdminPanelBankingFeatureTest extends TestCase
             ->make();
 
         Livewire::test(EditBanking::class, [
-            'record' => $banking->getKey()
+            'record' => $banking->alias
         ])
             ->fillForm(Arr::only($newData->toArray(), ['name', 'alias']))
             ->call('save')

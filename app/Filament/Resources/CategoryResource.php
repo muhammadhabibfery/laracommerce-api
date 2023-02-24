@@ -36,7 +36,8 @@ class CategoryResource extends Resource
                     ->unique(ignoreRecord: true)
                     ->reactive()
                     ->dehydrateStateUsing(fn ($state) => ucwords($state))
-                    ->afterStateUpdated(fn (Closure $set, $state) => $set('slug', str($state)->slug()->value())),
+                    ->afterStateUpdated(fn (Closure $set, $state) => $set('slug', str($state)->slug()->value()))
+                    ->columnSpan('full'),
                 Hidden::make('slug')
             ]);
     }

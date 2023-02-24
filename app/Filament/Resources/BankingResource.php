@@ -19,6 +19,8 @@ class BankingResource extends Resource
 
     protected static ?string $navigationGroup = 'Staff Management';
 
+    protected static ?string $recordRouteKeyName = 'alias';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -73,8 +75,8 @@ class BankingResource extends Resource
         return [
             'index' => Pages\ListBankings::route('/'),
             'create' => Pages\CreateBanking::route('/create'),
-            'view' => Pages\ViewBanking::route('/{record}'),
-            'edit' => Pages\EditBanking::route('/{record}/edit'),
+            'view' => Pages\ViewBanking::route('/{record:alias}'),
+            'edit' => Pages\EditBanking::route('/{record:alias}/edit'),
         ];
     }
 }
