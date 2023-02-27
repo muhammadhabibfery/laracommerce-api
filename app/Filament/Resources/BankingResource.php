@@ -15,7 +15,7 @@ class BankingResource extends Resource
 {
     protected static ?string $model = Banking::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
+    protected static ?string $navigationIcon = 'heroicon-o-credit-card';
 
     protected static ?string $navigationGroup = 'Staff Management';
 

@@ -32,6 +32,7 @@ abstract class TestCase extends BaseTestCase
      * Create a user instance.
      *
      * @param  array $data
+     * @param  int $count
      * @return User|Collection
      */
     public function createUser(?array $data = [], ?int $count = 1): User|Collection
@@ -45,6 +46,7 @@ abstract class TestCase extends BaseTestCase
      * Create authenticated user.
      *
      * @param  array $data
+     * @param  bool $api
      * @return User
      */
     public function authenticatedUser(?array $data = [], ?bool $api = true): User
@@ -102,6 +104,7 @@ abstract class TestCase extends BaseTestCase
      * Create a category instance.
      *
      * @param  array $data
+     * @param  int $count
      * @return Category|Collection
      */
     public function createCategory(?array $data = [], ?int $count = 1): Category|Collection
@@ -115,6 +118,7 @@ abstract class TestCase extends BaseTestCase
      * Create a banking instance.
      *
      * @param  array $data
+     * @param  int $count
      * @return Banking|Collection
      */
     public function createBanking(?array $data = [], ?int $count = 1): Banking|Collection
@@ -138,11 +142,14 @@ abstract class TestCase extends BaseTestCase
      * Create a finance instance.
      *
      * @param  array $data
-     * @return Finance
+     * @param  int $count
+     * @return Finance|Collection
      */
-    public function createFinance(?array $data = []): Finance
+    public function createFinance(?array $data = [], ?int $count = 1): Finance|Collection
     {
-        return Finance::factory()->create($data);
+        $finances = Finance::factory()->count($count)->create($data);
+
+        return $count < 2 ? $finances->first() : $finances;
     }
 
     public function deleteDirectory(string $directory, string $fileName, ?bool $delete = false): void
