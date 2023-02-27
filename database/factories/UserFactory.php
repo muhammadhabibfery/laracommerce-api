@@ -29,8 +29,10 @@ class UserFactory extends Factory
             'phone' => '08' . rand(11111111111, 99999999999),
             'nik' => fake()->nik(),
             'role' => fake()->randomElement(['ADMIN', 'STAFF', 'MERCHANT', 'CUSTOMER']),
+            'balance' => null,
             'status' => 'ACTIVE',
             'address' => fake()->address(),
+            'avatar' => null,
             'email_verified_at' => now(),
             'password' => Hash::make('password@123'), // password
             'remember_token' => Str::random(10),

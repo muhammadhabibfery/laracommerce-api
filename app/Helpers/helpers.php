@@ -121,3 +121,16 @@ function getEachProductField(string $attribute, Request $request, string $field)
 
     return $request->data[head($result)]['cart'][last($result)][$field];
 }
+
+/**
+ * set file name.
+ *
+ * @param  string $name
+ * @return string
+ */
+function setFileName(string $name): string
+{
+    $fileName = explode('.', $name);
+    $fileName = head($fileName) . rand(1, 100) . '.' . last($fileName);
+    return $fileName;
+}

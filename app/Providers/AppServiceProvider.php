@@ -2,9 +2,17 @@
 
 namespace App\Providers;
 
+use App\Filament\Resources\BankingResource;
+use App\Filament\Resources\CategoryResource;
+use App\Filament\Resources\ProfileResource;
 use Carbon\Carbon;
 use Filament\Facades\Filament;
+use Filament\Navigation\UserMenuItem;
+use Filament\Navigation\NavigationItem;
 use Illuminate\Support\ServiceProvider;
+use App\Filament\Resources\UserResource;
+use Filament\Navigation\NavigationBuilder;
+use Filament\Navigation\NavigationGroup;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,7 +38,13 @@ class AppServiceProvider extends ServiceProvider
         Filament::serving(function () {
             Filament::registerNavigationGroups([
                 'Admin Management',
-                'Staff Management'
+                'Staff Management',
+            ]);
+
+            Filament::registerUserMenuItems([
+                'account' => UserMenuItem::make()
+                    ->label('Profile')
+                    ->url(ProfileResource::getUrl()),
             ]);
         });
     }

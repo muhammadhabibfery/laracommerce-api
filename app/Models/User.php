@@ -2,13 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\VerifyEmails;
 use App\Notifications\ResetPasswords;
 use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -17,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable implements MustVerifyEmail, CanResetPassword, FilamentUser
+class User extends Authenticatable implements MustVerifyEmail, CanResetPassword, FilamentUser, HasAvatar
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -130,6 +129,16 @@ class User extends Authenticatable implements MustVerifyEmail, CanResetPassword,
     public function getAvatar(): mixed
     {
         return $this->avatar ? asset('storage/avatars/' . $this->avatar) : asset('images/no-user.jpg');
+    }
+
+    /**
+     * Get the user's avatar only for admin panel (user who has admin or staff role).
+     *
+     * @return string
+     */
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->avatar;
     }
 
     /**

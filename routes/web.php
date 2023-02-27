@@ -18,6 +18,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+Route::get('login', function () {
+    return to_route('filament.auth.login');
+})->name('login');
+
+// Auth::routes();
+
+
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

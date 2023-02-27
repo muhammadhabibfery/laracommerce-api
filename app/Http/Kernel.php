@@ -4,6 +4,8 @@ namespace App\Http;
 
 use App\Http\Middleware\AuthenticatedRole;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class Kernel extends HttpKernel
 {
