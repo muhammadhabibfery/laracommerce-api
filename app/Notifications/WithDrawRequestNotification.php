@@ -8,7 +8,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Arr;
 
-class WithDrawRequestNotification extends Notification
+class WithDrawRequestNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

@@ -25,6 +25,7 @@ return new class extends Migration
                 ['PENDING', 'SUCCESS', 'ACCEPT', 'REJECT']
             )->index();
             $table->unsignedBigInteger('balance');
+            $table->unsignedInteger('updated_by')->nullable();
             $table->timestamps();
         });
     }

@@ -24,7 +24,8 @@ class FinanceFactory extends Factory
             'description' => fake()->sentences(3, true),
             'amount' => rand(100000, 999000),
             'status' => fake()->randomElement(['PENDING', 'SUCCESS', 'FAILED', 'ACCEPT', 'REJECT']),
-            'balance' => rand(1000000, 5000000)
+            'balance' => rand(1000000, 5000000),
+            'updated_by' => null
         ];
     }
 }
