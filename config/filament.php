@@ -183,7 +183,10 @@ return [
 
     'database_notifications' => [
         'enabled' => true,
-        'polling_interval' => null,
+        'polling_interval' => '60s',
+        // 'polling_interval' => null,
+        // 'trigger' => 'notifications.database-notifications-trigger',
+
     ],
 
     /*

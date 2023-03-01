@@ -153,7 +153,7 @@ class FinanceTest extends TestCase
         $wdData = ['name' => $this->merchantAccount->name, 'bankAccountName' => $this->merchantAccount->bank_account_name, 'bankAccountNumber' => "{$this->merchantAccount->bank_account_number}", 'amount' => 100000];
 
         Notification::fake();
-        Notification::send($this->userAdmin, new WithDrawRequestNotification($wdData));
+        Notification::send($this->userAdmin, new WithDrawRequestNotification($wdData, $this->userMerchant));
 
         Notification::assertSentTo($this->userAdmin, WithDrawRequestNotification::class);
     }

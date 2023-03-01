@@ -2,26 +2,32 @@
 
 namespace App\Notifications;
 
+use App\Filament\Resources\WithdrawResource;
+use Filament\Notifications\Actions\Action;
+use Illuminate\Support\Arr;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
-use Illuminate\Support\Arr;
+use Filament\Notifications\Notification as NotificationFilament;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 
-class WithDrawRequestNotification extends Notification implements ShouldQueue
+class WithDrawRequestNotification extends Notification
 {
     use Queueable;
 
     public $wd;
+    public $user;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($wd)
+    public function __construct($wd, $user)
     {
         $this->wd = $wd;
+        $this->user = $user;
     }
 
     /**
@@ -32,6 +38,7 @@ class WithDrawRequestNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
+        // return ['broadcast'];
         return ['database'];
     }
 
@@ -49,14 +56,34 @@ class WithDrawRequestNotification extends Notification implements ShouldQueue
             ->line('Thank you for using our application!');
     }
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function toArray($notifiable)
+    // /**
+    //  * Get the array representation of the notification.
+    //  *
+    //  * @param  mixed  $notifiable
+    //  * @return array
+    //  */
+    // public function toArray($notifiable)
+    // {
+    //     return Arr::only($this->wd->toArray(), ['id', 'user_id', 'amount', 'balance', 'status']);
+    // }
+
+    public function toDatabase($notifiable): array
     {
-        return Arr::only($this->wd->toArray(), ['id', 'user_id', 'amount', 'balance', 'status']);
+        return NotificationFilament::make()
+            ->title('New Withdraw Request')
+            ->body("The merchant {$this->user->merchantAccount->name} just has made a withdraw request")
+            ->actions([
+                Action::make('visit')
+                    ->url(WithdrawResource::getUrl('index'))
+            ])
+            ->getDatabaseMessage();
     }
+
+    // public function toBroadcast($notifiable): BroadcastMessage
+    // {
+    //     return NotificationFilament::make()
+    //         ->title('New Withdraw Request')
+    //         ->body("The merchant {$this->user->merchantAccount->name} just has made a withdraw request")
+    //         ->getBroadcastMessage();
+    // }
 }

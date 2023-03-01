@@ -3,11 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\WithdrawResource\Pages;
-use App\Filament\Resources\WithdrawResource\RelationManagers;
 use App\Models\Finance;
-use Filament\Forms;
 use Filament\Forms\Components\Card;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -16,8 +13,8 @@ use Filament\Tables;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Radio;
+use Filament\Tables\Filters\SelectFilter;
 
 class WithdrawResource extends Resource
 {
@@ -31,8 +28,6 @@ class WithdrawResource extends Resource
 
     protected static ?string $recordRouteKeyName = 'id';
 
-    // protected static bool $shouldRegisterNavigation = false;
-
     protected static ?string $navigationLabel = 'Withdraw';
 
     protected static ?string $navigationGroup = 'Admin Management';
@@ -43,8 +38,6 @@ class WithdrawResource extends Resource
     {
         return parent::getEloquentQuery()->withoutGlobalScopes()
             ->where('user_id', '!=', auth()->id())
-            ->where('status', 'PENDING')
-            ->where('type', 'KREDIT')
             ->where('description', 'LIKE', 'withdraw%');
     }
 
@@ -103,7 +96,13 @@ class WithdrawResource extends Resource
 
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->options([
+                        'SUCCESS' => 'Success',
+                        'REJECT' => 'Reject',
+                        'PENDING' => 'Pending'
+                    ])
+                    ->default('PENDING')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -113,18 +112,10 @@ class WithdrawResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListWithdraws::route('/'),
-            // 'create' => Pages\CreateWithdraw::route('/create'),
             'edit' => Pages\EditWithdraw::route('/{record:id}/edit'),
         ];
     }

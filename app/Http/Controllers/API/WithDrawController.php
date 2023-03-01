@@ -2,22 +2,27 @@
 
 namespace App\Http\Controllers\API;
 
+use Closure;
+use ErrorException;
+use App\Models\User;
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\API\FinanceRequest;
 use App\Http\Resources\FinanceResource;
-use App\Http\Resources\MerchantAccountResource;
-use App\Models\User;
-use App\Notifications\WithDrawRequestNotification;
-use ErrorException;
-use Illuminate\Support\Arr;
+use App\Http\Requests\API\FinanceRequest;
+use Filament\Notifications\Actions\Action;
+use App\Filament\Resources\WithdrawResource;
 use Illuminate\Support\Facades\Notification;
+
 use Symfony\Component\HttpFoundation\Response;
+use App\Http\Resources\MerchantAccountResource;
+use App\Notifications\WithDrawRequestNotification;
+use Filament\Notifications\Events\DatabaseNotificationsSent;
+use Filament\Notifications\Notification as NotificationFilament;
 
 class WithDrawController extends Controller
 {
-
     private const WD_DESCRIPTION = 'withdraw of merchant funds',
         WD_TYPE = 'KREDIT',
         CREATE_SUCCESS = 'The withdraw request has been sent.',
@@ -46,7 +51,7 @@ class WithDrawController extends Controller
      * @param  FinanceRequest  $request
      * @return JsonResponse
      */
-    public function store(FinanceRequest $request): JsonResponse
+    public function store(FinanceRequest $request)
     {
         $user = $request->user();
         $validatedData = $this->mergeData($request->validatedWD());
@@ -55,7 +60,7 @@ class WithDrawController extends Controller
             if (!$user->merchantAccount->update(Arr::only($validatedData, ['balance'])))
                 throw new ErrorException(self::FAILED, Response::HTTP_INTERNAL_SERVER_ERROR);
 
-            Notification::send($this->getAdmin(), new WithDrawRequestNotification($wd));
+            Notification::send($this->getAdmin(), new WithDrawRequestNotification($wd, $user));
 
             $wd = (new FinanceResource($wd))
                 ->response()

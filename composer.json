@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "beyondcode/laravel-websockets": "^1.14",
         "filament/filament": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
         "kavist/rajaongkir": "^1.1",
@@ -17,7 +18,8 @@
         "laravel/scout": "^9.8",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.2",
-        "midtrans/midtrans-php": "^2.5"
+        "midtrans/midtrans-php": "^2.5",
+        "pusher/pusher-php-server": "^7.2"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",

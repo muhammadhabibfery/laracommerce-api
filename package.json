@@ -8,9 +8,11 @@
         "@popperjs/core": "^2.11.6",
         "axios": "^1.1.2",
         "bootstrap": "^5.2.3",
+        "laravel-echo": "^1.15.0",
         "laravel-vite-plugin": "^0.7.2",
         "lodash": "^4.17.19",
         "postcss": "^8.1.14",
+        "pusher-js": "^8.0.1",
         "sass": "^1.56.1",
         "vite": "^4.0.0"
     }
