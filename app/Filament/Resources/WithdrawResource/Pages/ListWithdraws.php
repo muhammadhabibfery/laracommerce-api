@@ -9,7 +9,7 @@ class ListWithdraws extends ListRecords
 {
     protected static string $resource = WithdrawResource::class;
 
-    protected function getActions(): array
+    protected function getTableBulkActions(): array
     {
         return [];
     }

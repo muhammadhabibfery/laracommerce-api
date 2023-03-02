@@ -19,14 +19,8 @@ class CreateProfile extends CreateRecord
 
     private string $notificationMessage = 'The profile has been updated';
 
-    protected function mutateFormDataBeforeCreate(array $data): array
+    protected function mutateFormDataBeforeFill(array $data): array
     {
-        if (isset($data['new_password'])) $data['password'] = Hash::make($data['new_password']);
-
-        if (isset($data['avatar'])) $this->deleteImage('avatars', last(explode('/', self::$resource::getUser()->avatar)));
-
-        unset($data['new_password']);
-
         return $data;
     }
 
@@ -43,8 +37,14 @@ class CreateProfile extends CreateRecord
         $this->callHook('afterFill');
     }
 
-    protected function mutateFormDataBeforeFill(array $data): array
+    protected function mutateFormDataBeforeCreate(array $data): array
     {
+        if (isset($data['new_password'])) $data['password'] = Hash::make($data['new_password']);
+
+        if (isset($data['avatar'])) $this->deleteImage('avatars', last(explode('/', self::$resource::getUser()->avatar)));
+
+        unset($data['new_password']);
+
         return $data;
     }
 

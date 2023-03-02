@@ -2,19 +2,21 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\WithdrawResource\Pages;
-use App\Models\Finance;
-use Filament\Forms\Components\Card;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Form;
-use Filament\Resources\Resource;
-use Filament\Resources\Table;
 use Filament\Tables;
-use Filament\Tables\Columns\BadgeColumn;
-use Filament\Tables\Columns\TextColumn;
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\Finance;
+use Filament\Resources\Form;
+use Filament\Resources\Table;
+use Filament\Facades\Filament;
+use App\Policies\FinancePolicy;
+use Filament\Resources\Resource;
+use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Radio;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\WithdrawResource\Pages;
 
 class WithdrawResource extends Resource
 {
@@ -30,9 +32,9 @@ class WithdrawResource extends Resource
 
     protected static ?string $navigationLabel = 'Withdraw';
 
-    protected static ?string $navigationGroup = 'Admin Management';
+    protected static ?string $navigationGroup = 'Staff Management';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 1;
 
     public static function getEloquentQuery(): Builder
     {
@@ -115,5 +117,12 @@ class WithdrawResource extends Resource
             'index' => Pages\ListWithdraws::route('/'),
             'edit' => Pages\EditWithdraw::route('/{record:id}/edit'),
         ];
+    }
+
+    public static function registerNavigationItems(): void
+    {
+        if (!setAuthorization(auth()->user(), FinancePolicy::ADMIN_ROLE, FinancePolicy::STAFF_ROLE)) return;
+
+        Filament::registerNavigationItems(static::getNavigationItems());
     }
 }

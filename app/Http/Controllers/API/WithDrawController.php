@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Notification;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Resources\MerchantAccountResource;
 use App\Notifications\WithDrawRequestNotification;
+use Illuminate\Database\Eloquent\Collection;
 
 class WithDrawController extends Controller
 {
@@ -54,7 +55,7 @@ class WithDrawController extends Controller
             if (!$user->merchantAccount->update(Arr::only($validatedData, ['balance'])))
                 throw new ErrorException(self::FAILED, Response::HTTP_INTERNAL_SERVER_ERROR);
 
-            Notification::send($this->getAdmin(), new WithDrawRequestNotification($wd, $user));
+            Notification::send($this->getStaff(), new WithDrawRequestNotification($wd, $user));
 
             $wd = (new FinanceResource($wd))
                 ->response()
@@ -110,13 +111,13 @@ class WithDrawController extends Controller
     }
 
     /**
-     * Query to get an admin.
+     * Query to get users who have staff role.
      *
-     * @return User
+     * @return Collection
      */
-    private function getAdmin(): User
+    private function getStaff(): Collection
     {
         // return User::whereJsonContains('role', 'ADMIN')->firstOrFail();
-        return User::where('role', json_encode(["ADMIN"]))->firstOrFail();
+        return User::where('role', json_encode(["STAFF"]))->get();
     }
 }

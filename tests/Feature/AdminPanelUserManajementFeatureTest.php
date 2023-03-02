@@ -18,6 +18,7 @@ use Tests\TestCase;
 class AdminPanelUserManajementFeatureTest extends TestCase
 {
     private Collection $users;
+    private User $userInactive;
     private User $userAdmin;
     private City $city;
 
@@ -26,7 +27,9 @@ class AdminPanelUserManajementFeatureTest extends TestCase
         parent::setUp();
         $this->withoutExceptionHandling();
         $this->userAdmin = $this->authenticatedUser(['role' => 'ADMIN'], false);
-        $this->users = $this->createUser(count: 9);
+        $this->users = $this->createUser(count: 8);
+        $this->userInactive = $this->createUser(['role' => 'STAFF', 'status' => 'INACTIVE']);
+
         $this->city = City::factory()->create();
     }
 
@@ -102,48 +105,43 @@ class AdminPanelUserManajementFeatureTest extends TestCase
     /** @test */
     public function user_menu_edit_can_be_rendered()
     {
-        $this->get(UserResource::getUrl('edit', ['record' => $this->users->last()]))
+        $this->get(UserResource::getUrl('edit', ['record' => $this->userInactive]))
             ->assertSuccessful();
     }
 
     /** @test */
     public function user_menu_edit_can_retrieve_data()
     {
-        $user = $this->users->last();
-
-        Livewire::test(EditUser::class, ['record' => $user->username])
+        Livewire::test(EditUser::class, ['record' => $this->userInactive->username])
             ->assertFormSet([
-                'name' => $user->name,
-                'username' => $user->username,
+                'name' => $this->userInactive->name,
+                'username' => $this->userInactive->username,
             ]);
     }
 
     /** @test */
     public function user_menu_edit_can_edit_selected_user()
     {
-        $user = $this->users->last();
         $newData = User::factory(['name' => 'ringgo star', 'username' => 'ringgo-star', 'role' => 'STAFF'])->make();
         $newData = array_merge(Arr::only($newData->toArray(), ['name', 'username']), ['role' => 'ADMIN', 'city_id' => $this->city->id]);
 
-        Livewire::test(EditUser::class, ['record' => $user->username])
+        Livewire::test(EditUser::class, ['record' => $this->userInactive->username])
             ->fillForm($newData)
             ->call('save')
             ->assertHasNoFormErrors();
 
         $this->assertDatabaseHas('users', Arr::except($newData, ['role']))
-            ->assertDatabaseMissing('users', Arr::only($user->toArray(), ['name', 'username']));
+            ->assertDatabaseMissing('users', Arr::only($this->userInactive->toArray(), ['name', 'username']));
     }
 
     /** @test */
     public function user_menu_delete_can_delete_selected_user()
     {
-        $user = $this->createUser(['role' => 'STAFF']);
-
         Livewire::test(ListUsers::class)
-            ->callTableAction(DeleteAction::class, $user);
+            ->callTableAction(DeleteAction::class, $this->userInactive);
 
-        $this->assertDatabaseMissing('users', Arr::only($user->toArray(), ['name', 'username']))
-            ->assertDatabaseCount('users', 10);
+        $this->assertDatabaseMissing('users', Arr::only($this->userInactive->toArray(), ['name', 'username']))
+            ->assertDatabaseCount('users', 9);
     }
 
     /** @test */

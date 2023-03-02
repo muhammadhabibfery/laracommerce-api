@@ -25,6 +25,9 @@ class CategoryResource extends Resource
 
     protected static ?string $navigationGroup = 'Staff Management';
 
+    protected static ?int $navigationSort = 3;
+
+
     public static function form(Form $form): Form
     {
         return $form
@@ -69,9 +72,6 @@ class CategoryResource extends Resource
                     ->successNotificationTitle(ManageCategories::$notificationMessage . 'updated'),
                 Tables\Actions\DeleteAction::make()
                     ->successNotificationTitle(ManageCategories::$notificationMessage . 'deleted'),
-            ])
-            ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
             ])
             ->defaultSort('id');
     }

@@ -134,3 +134,25 @@ function setFileName(string $name): string
     $fileName = head($fileName) . rand(1, 100) . '.' . last($fileName);
     return $fileName;
 }
+
+/**
+ * Set user authorization.
+ *
+ * @param  User $user
+ * @return bool
+ */
+function setAuthorization(User $user, ...$roles): bool
+{
+    return checkRole($roles, $user->role) && $user->status === 'ACTIVE';
+}
+
+/**
+ * Set user ability.
+ *
+ * @param  callable $permission
+ * @return bool
+ */
+function setAbility(callable $permission): bool
+{
+    return $permission();
+}

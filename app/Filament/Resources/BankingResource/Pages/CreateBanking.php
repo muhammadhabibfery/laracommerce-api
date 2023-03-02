@@ -9,6 +9,8 @@ class CreateBanking extends CreateRecord
 {
     protected static string $resource = BankingResource::class;
 
+    protected static bool $canCreateAnother = false;
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['created_by'] = auth()->id();

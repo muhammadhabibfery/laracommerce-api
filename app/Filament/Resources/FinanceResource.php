@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use Carbon\Carbon;
 use App\Models\Finance;
 use Filament\Resources\Table;
+use Filament\Facades\Filament;
+use App\Policies\FinancePolicy;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
@@ -48,5 +50,12 @@ class FinanceResource extends Resource
         return [
             'index' => Pages\ListFinances::route('/'),
         ];
+    }
+
+    public static function registerNavigationItems(): void
+    {
+        if (!setAuthorization(auth()->user(), FinancePolicy::ADMIN_ROLE)) return;
+
+        Filament::registerNavigationItems(static::getNavigationItems());
     }
 }

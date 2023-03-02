@@ -21,8 +21,8 @@ class AdminPanelBankingFeatureTest extends TestCase
     {
         parent::setUp();
         $this->withoutExceptionHandling();
-        $this->authenticatedUser(['role' => 'ADMIN'], false);
-        $this->bankings = $this->createBanking(count: 10);
+        $userAdmin = $this->authenticatedUser(['role' => 'ADMIN'], false);
+        $this->bankings = $this->createBanking(['created_by' => $userAdmin->id], 10);
     }
 
     /** @test */
@@ -88,6 +88,7 @@ class AdminPanelBankingFeatureTest extends TestCase
     /** @test */
     public function banking_menu_edit_can_be_rendered()
     {
+        $this->withExceptionHandling();
         $this->get(BankingResource::getUrl('edit', [
             'record' => $this->bankings->first()
         ]))

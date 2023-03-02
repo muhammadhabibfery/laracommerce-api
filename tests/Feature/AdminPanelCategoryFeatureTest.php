@@ -18,8 +18,8 @@ class AdminPanelCategoryFeatureTest extends TestCase
     {
         parent::setUp();
         $this->withoutExceptionHandling();
-        $this->authenticatedUser(['role' => 'ADMIN'], false);
-        $this->category = $this->createCategory(count: 3);
+        $userAdmin = $this->authenticatedUser(['role' => 'ADMIN'], false);
+        $this->category = $this->createCategory(['created_by' => $userAdmin->id], 3);
     }
 
     /** @test */

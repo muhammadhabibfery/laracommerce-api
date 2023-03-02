@@ -21,7 +21,13 @@ class ManageCategories extends ManageRecords
 
                     return $data;
                 })
+                ->disableCreateAnother()
                 ->successNotificationTitle(self::$notificationMessage . 'created'),
         ];
+    }
+
+    protected function getTableBulkActions(): array
+    {
+        return [];
     }
 }

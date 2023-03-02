@@ -10,6 +10,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\ProfileResource\Pages;
+use App\Policies\UserPolicy;
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Validation\Rules\Password;
 use Livewire\TemporaryUploadedFile;
@@ -105,5 +106,10 @@ class ProfileResource extends Resource
     public static function getUser(): User
     {
         return auth()->user();
+    }
+
+    public static function shouldIgnorePolicies(): bool
+    {
+        return setAuthorization(self::getUser(), UserPolicy::ADMIN_ROLE, UserPolicy::STAFF_ROLE);
     }
 }

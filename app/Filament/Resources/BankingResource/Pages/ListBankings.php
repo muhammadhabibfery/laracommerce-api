@@ -16,4 +16,9 @@ class ListBankings extends ListRecords
             Actions\CreateAction::make()
         ];
     }
+
+    protected function getTableBulkActions(): array
+    {
+        return [];
+    }
 }
