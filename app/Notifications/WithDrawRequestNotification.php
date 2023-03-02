@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Filament\Resources\WithdrawResource;
 use Filament\Notifications\Actions\Action;
-use Illuminate\Support\Arr;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;

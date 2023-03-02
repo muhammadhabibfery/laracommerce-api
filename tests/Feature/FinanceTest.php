@@ -9,11 +9,13 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\MerchantAccount;
 use App\Notifications\WithDrawRequestNotification;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Notification;
+use Filament\Notifications\Notification as NotificationFilament;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\Validations\FinanceValidation;
+
+use function Filament\Notifications\Testing\assertNotified;
 
 class FinanceTest extends TestCase
 {
@@ -156,5 +158,6 @@ class FinanceTest extends TestCase
         Notification::send($this->userAdmin, new WithDrawRequestNotification($wdData, $this->userMerchant));
 
         Notification::assertSentTo($this->userAdmin, WithDrawRequestNotification::class);
+        NotificationFilament::assertNotified();
     }
 }

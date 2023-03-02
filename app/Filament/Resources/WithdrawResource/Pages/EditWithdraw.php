@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Mail;
 class EditWithdraw extends EditRecord
 {
     protected static string $resource = WithdrawResource::class;
+
     public array $payload;
 
     protected function getActions(): array

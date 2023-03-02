@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use Closure;
 use ErrorException;
 use App\Models\User;
 use Illuminate\Support\Arr;
@@ -11,15 +10,10 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\FinanceResource;
 use App\Http\Requests\API\FinanceRequest;
-use Filament\Notifications\Actions\Action;
-use App\Filament\Resources\WithdrawResource;
 use Illuminate\Support\Facades\Notification;
-
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Resources\MerchantAccountResource;
 use App\Notifications\WithDrawRequestNotification;
-use Filament\Notifications\Events\DatabaseNotificationsSent;
-use Filament\Notifications\Notification as NotificationFilament;
 
 class WithDrawController extends Controller
 {
@@ -70,51 +64,6 @@ class WithDrawController extends Controller
         }
 
         throw new ErrorException(self::FAILED, Response::HTTP_INTERNAL_SERVER_ERROR);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 
     /**
