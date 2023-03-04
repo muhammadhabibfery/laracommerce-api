@@ -22,13 +22,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(ProvinceSeeder::class);
+        $this->call(ProvinceSeeder::class);
 
-        $province = Province::factory()->create();
+        // $province = Province::factory()->create();
 
-        City::factory()
-            ->for($province)
-            ->create();
+        // City::factory()
+        //     ->for($province)
+        //     ->create();
 
         foreach (['ADMIN', 'STAFF', 'MERCHANT'] as $role)
             $user[strtolower($role)] = User::factory()->create(['role' => $role]);
